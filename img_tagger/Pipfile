@@ -7,6 +7,7 @@ name = "pypi"
 tensorflow = "*"
 pika = "*"
 pillow = "*"
+bson = "*"
 
 [dev-packages]
 pytest = "*"
@@ -15,6 +16,7 @@ black = "*"
 mypy = "*"
 ipython = "*"
 pyre-check = "*"
+ipdb = "*"
 
 [requires]
 python_version = "3.9"

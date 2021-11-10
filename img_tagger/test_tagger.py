@@ -16,5 +16,3 @@ def test_ImageTaggerResNet152V2():
     print(tag)
 
     assert True
-
-test_ImageTaggerResNet152V2()
