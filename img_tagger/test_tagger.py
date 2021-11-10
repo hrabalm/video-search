@@ -1,11 +1,20 @@
-from tagger import *
+import os
+
 from PIL import Image
 
-test_image = Image.open('test_image.png').resize((224, 224))
+from tagger import *
+
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'  # don't use GPU during the testing
+
+test_image = Image.open('test_image.png').resize((224, 224)).convert('RGB')
 
 
 def test_ImageTaggerResNet152V2():
     it = ImageTaggerResNet152V2()
-    it.tag_image(test_image)
+    tag = it.tag_image(test_image)
+
+    print(tag)
 
     assert True
+
+test_ImageTaggerResNet152V2()
