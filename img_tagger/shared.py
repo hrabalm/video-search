@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from typing import NamedTuple, TypedDict, cast, Tuple
 
 import bson
+import lz4.block
 from pika import connection
 from PIL import Image
 
@@ -23,12 +24,16 @@ class ImageRequest:
         size = self.img.size
         image_bytes = self.img.tobytes()
         image_format = self.img.mode
+        uncompressed = bson.dumps(_ImageRequestTD(
+            size=size, image_bytes=image_bytes, image_format=image_format))
+        compressed = lz4.block.compress(uncompressed)
 
-        return bson.dumps(_ImageRequestTD(size=size, image_bytes=image_bytes, image_format=image_format))
+        return compressed
 
     @staticmethod
     def frombytes(data) -> ImageRequest:
-        decoded = bson.loads(data)
+        decompressed = lz4.block.decompress(data)
+        decoded = bson.loads(decompressed)
         typed = cast(_ImageRequestTD, decoded)
         img = Image.frombytes(typed['image_format'],
                               typed['size'], typed['image_bytes'])

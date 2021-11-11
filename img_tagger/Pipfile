@@ -8,6 +8,7 @@ tensorflow = "*"
 pika = "*"
 pillow = "*"
 bson = "*"
+lz4 = "*"
 
 [dev-packages]
 pytest = "*"
