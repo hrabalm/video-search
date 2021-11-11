@@ -15,8 +15,12 @@ autopep8 = "*"
 black = "*"
 mypy = "*"
 ipython = "*"
-pyre-check = "*"
+pyre-check = { version = "*", sys_platform="== 'linux'" }
 ipdb = "*"
+pytype = { version = "*", sys_platform="== 'linux'" }
 
 [requires]
 python_version = "3.9"
+
+[pipenv]
+allow_prereleases = true
