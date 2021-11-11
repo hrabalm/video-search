@@ -20,7 +20,7 @@ if len(physical_devices):
 
 class ImageTagger(ABC):
     @abstractmethod
-    def tag_image(self, img: Image) -> ImageTag:
+    def tag_image(self, img: Image.Image) -> ImageTag:
         pass
 
 
@@ -28,7 +28,7 @@ class ImageTaggerResNet152V2(ImageTagger):
     def __init__(self):
         self.model = ResNet152V2(weights='imagenet')
 
-    def tag_image(self, img: Image) -> ImageTag:
+    def tag_image(self, img: Image.Image) -> ImageTag:
         x = image.img_to_array(img)
         x = np.expand_dims(x, axis=0)
         x = preprocess_input(x)
