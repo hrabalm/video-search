@@ -31,7 +31,8 @@ class _ImageRequestTD(TypedDict):
     # TODO: I should probably add something like this:
     # image_uid: str   # what video?
     # image_frame: int # what frame?
-    # image_frames_total: int  # how many frames are there in total? redundant but small
+    # image_frames_total: int  # how many frames are there in total? redundant,
+    # but small
 
 
 class ImageRequest:
@@ -57,7 +58,9 @@ class ImageRequest:
         decoded = bson.loads(decompressed)
         typed = cast(_ImageRequestTD, decoded)
         img = Image.frombytes(
-            typed["image_format"], typed["size"], typed["image_bytes"]  # type: ignore
+            typed["image_format"],
+            typed["size"],
+            typed["image_bytes"],
         )
 
         return ImageRequest(img)

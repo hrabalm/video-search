@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 
-# Keras has to be imported after the Tensorflow is properly setup (in regards to
-# VRAM usage etc.)
+# Keras has to be imported after the Tensorflow is properly setup (in regards
+# to VRAM usage etc.)
 import tensorflow as tf
 from PIL import Image
 from tensorflow.keras.applications.resnet_v2 import (
@@ -37,8 +37,8 @@ class ImageTaggerResNet152V2(ImageTagger):
         x = preprocess_input(x)
 
         preds = self.model.predict(x)
-        # decode the results into a list of tuples (class, description, probability)
-        # (one such list for each sample in the batch)
+        # decode the results into a list of tuples (class, description,
+        # probability), one such list for each sample in the batch
         decoded_preds = decode_predictions(preds, top=3)[0]
         # print('Predicted:', decoded_preds)
         return ImageTag(decoded_preds)

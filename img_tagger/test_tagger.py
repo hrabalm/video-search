@@ -12,15 +12,14 @@ test_image = Image.open("test_image.png").resize((224, 224)).convert("RGB")
 
 def test_ImageTaggerResNet152V2():
     it = ImageTaggerResNet152V2()
-    tag = it.tag_image(test_image)
-
-    print(tag)
+    it.tag_image(test_image)
 
     assert True
 
 
 def test_ImageRequestSerializeAndDeserialize():
-    """Test, whether the image request succesfully serializes and deserializes"""
+    """Test, whether the image request succesfully serializes and deserializes
+    """
     ir = ImageRequest(test_image)
     b = ir.tobytes()
     d = ImageRequest.frombytes(b)
