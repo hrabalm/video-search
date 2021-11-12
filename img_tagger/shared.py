@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import collections
 from dataclasses import dataclass
-from typing import Literal, TypedDict, cast, Tuple
+from typing import Literal, TypedDict, cast, Tuple, NamedTuple, List
 
 import bson
 import lz4.block
@@ -64,6 +64,22 @@ class ImageRequest:
         )
 
         return ImageRequest(img)
+
+
+class Tag(NamedTuple):
+    id: str
+    name: str
+    conf: float
+    source: str
+
+
+@dataclass
+class ImageTag:
+    tags: List[Tag]
+
+
+class VideoTag:
+    tags: List[VideoTag]
 
 
 VideoTag1 = collections.namedtuple("VideoTag1", ["tag", "confidence"])

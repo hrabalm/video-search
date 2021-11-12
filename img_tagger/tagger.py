@@ -13,7 +13,7 @@ from tensorflow.keras.applications.resnet_v2 import (
 )
 from tensorflow.keras.preprocessing import image
 
-from tag import ImageTag
+from shared import Tag, ImageTag
 
 # If there is a GPU available, enable memory_growth
 physical_devices = tf.config.list_physical_devices("GPU")
@@ -29,6 +29,7 @@ class ImageTagger(ABC):
 
 class ImageTaggerResNet152V2(ImageTagger):
     def __init__(self):
+        self.source = "ResNet152V2"
         self.model = ResNet152V2(weights="imagenet")
 
     def tag_image(self, img: Image.Image) -> ImageTag:
@@ -41,4 +42,7 @@ class ImageTaggerResNet152V2(ImageTagger):
         # probability), one such list for each sample in the batch
         decoded_preds = decode_predictions(preds, top=3)[0]
         # print('Predicted:', decoded_preds)
-        return ImageTag(decoded_preds)
+        # print(decoded_preds)
+        return ImageTag(
+            tags=[Tag(id, name, conf, self.source) for id, name, conf in decoded_preds]
+        )
