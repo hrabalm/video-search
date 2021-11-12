@@ -3,11 +3,11 @@ import os
 from PIL import Image
 from shared import ImageRequest
 
-from tagger import *
+from tagger import ImageTaggerResNet152V2
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '-1'  # don't use GPU during the testing
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # don't use GPU during the testing
 
-test_image = Image.open('test_image.png').resize((224, 224)).convert('RGB')
+test_image = Image.open("test_image.png").resize((224, 224)).convert("RGB")
 
 
 def test_ImageTaggerResNet152V2():

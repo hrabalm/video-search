@@ -19,6 +19,7 @@ ipython = "*"
 pyre-check = { version = "*", sys_platform="== 'linux'" }
 ipdb = "*"
 pytype = { version = "*", sys_platform="== 'linux'" }
+flake8 = "*"
 
 [requires]
 python_version = "3.9"

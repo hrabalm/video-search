@@ -1,2 +1,2 @@
-HOST = 'localhost'
-QUEUE_NAME = 'resnetTODO_queue'
+HOST = "localhost"
+QUEUE_NAME = "resnetTODO_queue"

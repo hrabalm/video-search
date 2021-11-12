@@ -1,7 +1,6 @@
 from PIL import Image
 import pika
 import logging
-import bson
 
 from tagger import ImageTaggerResNet152V2
 from shared import ImageRequest
@@ -24,9 +23,7 @@ def callback(ch, method, properties, body):
 
 
 def server_loop():
-    connection = pika.BlockingConnection(
-        pika.ConnectionParameters(host=HOST)
-    )
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host=HOST))
     channel = connection.channel()
 
     channel.queue_declare(QUEUE_NAME)

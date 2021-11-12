@@ -2,17 +2,31 @@ from __future__ import annotations
 
 import collections
 from dataclasses import dataclass
-from typing import NamedTuple, TypedDict, cast, Tuple
+from typing import Literal, TypedDict, cast, Tuple
 
 import bson
 import lz4.block
-from pika import connection
 from PIL import Image
+
+ColorMode = Literal[
+    "1",
+    "CMYK",
+    "F",
+    "HSV",
+    "I",
+    "L",
+    "LAB",
+    "P",
+    "RGB",
+    "RGBA",
+    "RGBX",
+    "YCbCr",
+]
 
 
 class _ImageRequestTD(TypedDict):
     size: Tuple[int, int]
-    image_format: str
+    image_format: ColorMode
     image_bytes: bytes
     # TODO: I should probably add something like this:
     # image_uid: str   # what video?
@@ -27,9 +41,12 @@ class ImageRequest:
     def tobytes(self) -> bytes:
         size = self.img.size
         image_bytes = self.img.tobytes()
-        image_format = self.img.mode
-        uncompressed = bson.dumps(_ImageRequestTD(
-            size=size, image_bytes=image_bytes, image_format=image_format))
+        image_format = cast(ColorMode, self.img.mode)
+        uncompressed = bson.dumps(
+            _ImageRequestTD(
+                size=size, image_bytes=image_bytes, image_format=image_format
+            )
+        )
         compressed = lz4.block.compress(uncompressed)
 
         return compressed
@@ -39,17 +56,18 @@ class ImageRequest:
         decompressed = lz4.block.decompress(data)
         decoded = bson.loads(decompressed)
         typed = cast(_ImageRequestTD, decoded)
-        img = Image.frombytes(typed['image_format'],
-                              typed['size'], typed['image_bytes'])
+        img = Image.frombytes(
+            typed["image_format"], typed["size"], typed["image_bytes"]  # type: ignore
+        )
 
         return ImageRequest(img)
 
 
-VideoTag1 = collections.namedtuple('VideoTag1', ['tag', 'confidence'])
+VideoTag1 = collections.namedtuple("VideoTag1", ["tag", "confidence"])
 
 
 @dataclass
-class VideoTag2():
+class VideoTag2:
     tag: str
     confidence: float
     source: str
