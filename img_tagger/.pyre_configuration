@@ -1,0 +1,6 @@
+{
+  "source_directories": [
+    "."
+  ],
+  "taint_models_path": "/home/mhn/.local/share/virtualenvs/img_tagger-kmi4DHAh/lib"
+}
