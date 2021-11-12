@@ -14,6 +14,10 @@ class _ImageRequestTD(TypedDict):
     size: Tuple[int, int]
     image_format: str
     image_bytes: bytes
+    # TODO: I should probably add something like this:
+    # image_uid: str   # what video?
+    # image_frame: int # what frame?
+    # image_frames_total: int  # how many frames are there in total? redundant but small
 
 
 class ImageRequest:

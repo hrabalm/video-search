@@ -1,6 +1,7 @@
 import os
 
 from PIL import Image
+from shared import ImageRequest
 
 from tagger import *
 
@@ -16,3 +17,13 @@ def test_ImageTaggerResNet152V2():
     print(tag)
 
     assert True
+
+
+def test_ImageRequestSerializeAndDeserialize():
+    """Test, whether the image request succesfully serializes and deserializes"""
+    ir = ImageRequest(test_image)
+    b = ir.tobytes()
+    d = ImageRequest.frombytes(b)
+
+    # compare images byte by byte
+    assert ir.img.tobytes() == d.img.tobytes()
