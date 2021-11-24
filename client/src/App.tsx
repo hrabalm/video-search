@@ -12,9 +12,14 @@ import { Container, Divider, Drawer, IconButton, InputBase, List, ListItem, List
 function SearchBar() {
   return (
     <Box>
-      <Paper style={{ display: "flex", alignItems: "center" }} sx={{ m: 1 }}>
-        <TextField sx={{ m: 1, flex: 1 }} placeholder="Search"></TextField>
-        <Button>Search</Button>
+      <Paper style={{ display: "flex", alignItems: "left", flexDirection: "column"}}>
+        <Box style={{ display: "flex", alignItems: "center", flexDirection: "row" }}>
+          <TextField sx={{ m: 1, flex: 1 }} placeholder="Search"></TextField>
+          <Button>Search</Button>
+        </Box>
+        <Box style={{ display: "flex", alignItems: "center", flexDirection: "row" }}>
+          <Typography>Selected tags:</Typography>
+        </Box>
       </Paper>
     </Box>
   );
