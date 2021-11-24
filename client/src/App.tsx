@@ -13,11 +13,11 @@ function SearchBar() {
   return (
     <Box>
       <Paper style={{ display: "flex", alignItems: "left", flexDirection: "column"}} sx={{ p: 1 }}>
-        <Box style={{ display: "flex", alignItems: "center", flexDirection: "row" }}>
+        <Box style={{ display: "flex", flexDirection: "row" }}>
           <TextField sx={{ m: 1, flex: 1 }} placeholder="Search"></TextField>
           <Button>Search</Button>
         </Box>
-        <Box style={{ display: "flex", alignItems: "center", flexDirection: "row" }}>
+        <Box style={{ display: "flex", flexDirection: "row" }}>
           <Typography>Selected tags:</Typography>
         </Box>
       </Paper>
