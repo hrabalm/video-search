@@ -8,30 +8,8 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import './App.css';
 import { Container, Divider, Drawer, IconButton, InputBase, List, ListItem, ListItemText, Toolbar } from '@mui/material';
+import SearchView from './components/SearchView';
 
-function SearchBar() {
-  return (
-    <Box>
-      <Paper style={{ display: "flex", alignItems: "left", flexDirection: "column"}} sx={{ p: 1 }}>
-        <Box style={{ display: "flex", flexDirection: "row" }}>
-          <TextField sx={{ m: 1, flex: 1 }} placeholder="Search"></TextField>
-          <Button>Search</Button>
-        </Box>
-        <Box style={{ display: "flex", flexDirection: "row" }}>
-          <Typography>Selected tags:</Typography>
-        </Box>
-      </Paper>
-    </Box>
-  );
-}
-
-function SearchView() {
-  return (
-    <Box>
-      <SearchBar />
-    </Box>
-  );
-}
 
 function App() {
   const darkTheme = createTheme({
