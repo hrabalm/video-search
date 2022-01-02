@@ -2,7 +2,7 @@
 import os
 
 import psycopg2
-from flask import Flask
+from flask import Flask, request
 
 DB_HOST = os.getenv("SQL_HOST")
 DB_PORT = os.getenv("SQL_PORT")
@@ -22,18 +22,21 @@ cur = conn.cursor()
 app = Flask(__name__)
 
 
-@app.get("/v1/get-tags")
+@app.get("/api/v1/get-tags")
 def get_tags():
     return {"tags": ["cat", "dog", "horse", "zebra"]}
 
 
-@app.get("/v1/search-by-tags")
+@app.post("/api/v1/search-by-tags")
 def search_by_tags():
-    return {"message": "Hello World!"}
+    data = request.json
+
+    requested_tags = data['requested_tags']
+    return {"message": "Success", "data": data, "requested_tags": requested_tags}
 
 
-@app.get("/v1/show-dbs")
+@app.get("/api/v1/show-tables")
 def show_dbs():
     cur.execute("SELECT * FROM pg_catalog.pg_tables")
     x = cur.fetchall()
-    return {"message": "Hello World!", "answer": x}
+    return {"tables": x}
