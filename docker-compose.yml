@@ -1,0 +1,37 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=${SQL_PASSWORD}
+    ports:
+      - "5432:5432"
+    # volumes:
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${SQL_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  api:
+    build: "./api"
+    ports:
+      - "8080:5000"
+    volumes:
+      - ./api:/app
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - FLASK_RUN_HOST=db
+      - FLASK_ENV=development
+      - SQL_HOST
+      - SQL_PORT
+      - SQL_USER
+      - SQL_PASSWORD
+      - SQL_DB
+  web:
+    build: "./client"
+    ports:
+      - "80:3000"
+    volumes:
+      - "./client:/app"
