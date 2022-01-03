@@ -8,6 +8,7 @@ flask = "*"
 psycopg2-binary = "*"
 pypika = "*"
 postgres = "*"
+pymongo = "*"
 
 [dev-packages]
 flake8 = "*"
