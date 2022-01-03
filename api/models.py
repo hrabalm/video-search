@@ -23,3 +23,8 @@ class Tags:
         res = [dict(x) for x in res]
         # return {"tags": ["cat", "dog", "horse", "zebra"], "raw": res}
         return {"tags": res}
+
+class Videos:
+    @staticmethod
+    def add_video(video):
+        raise NotImplementedError
