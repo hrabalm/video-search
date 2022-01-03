@@ -25,6 +25,7 @@ def add_video():
 
     return {"message": "Success"}
 
+
 @app.get("/api/v1/videos")
 def get_all_videos():
     return Videos.get_all()
