@@ -23,11 +23,11 @@ services:
       timeout: 5s
       retries: 10
   api:
-    build: "./api"
+    build: "./backend/api"
     ports:
       - "8080:5000"
     volumes:
-      - ./api:/app
+      - ./backend/api:/app
     depends_on:
       mongo:
         condition: service_healthy

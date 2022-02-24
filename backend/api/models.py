@@ -1,6 +1,7 @@
-from db import db
-from bson import json_util
 import json
+
+from bson import json_util
+from db import db
 
 
 def to_json(x):

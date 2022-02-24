@@ -1,4 +1,5 @@
 import argparse
+
 import indexer
 
 HOST = "localhost"

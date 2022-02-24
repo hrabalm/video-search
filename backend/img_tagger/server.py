@@ -1,11 +1,10 @@
-from PIL import Image
-import pika
 import logging
 
-from tagger import ImageTaggerResNet152V2
-from shared import ImageRequest
-
+import pika
 from constants_test import HOST, QUEUE_NAME
+from PIL import Image
+from shared import ImageRequest
+from tagger import ImageTaggerResNet152V2
 
 logger = logging.getLogger()
 

@@ -1,10 +1,8 @@
 # import av
 import pika
-
 from constants_test import HOST, QUEUE_NAME
-from shared import ImageRequest
-
 from PIL import Image
+from shared import ImageRequest
 
 img = Image.open("test_image.png").convert("RGB").resize((224, 224))
 

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import collections
 from dataclasses import dataclass
-from typing import Literal, TypedDict, cast, Tuple, NamedTuple, List
+from typing import List, Literal, NamedTuple, Tuple, TypedDict, cast
 
 import bson
 import lz4.block

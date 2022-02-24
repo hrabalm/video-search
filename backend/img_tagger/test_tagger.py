@@ -1,7 +1,6 @@
 import os
 
 from PIL import Image
-
 from shared import ImageRequest
 from tagger import ImageTaggerResNet152V2
 

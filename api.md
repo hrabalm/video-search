@@ -1,4 +1,0 @@
-- GET BASE/v1/tags/
-    - vrátí seznam tagů
-- GET BASE/v1/search-by-tags
-    - vrátí seznam výsledků - seznam videí, která mají přidělená dané tagy

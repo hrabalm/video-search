@@ -1,7 +1,9 @@
+from typing import BinaryIO
+
 import av
 import pika
 from PIL import Image
-from typing import BinaryIO
+
 
 def process_video(file: BinaryIO):
     container = av.open(file)
@@ -10,10 +12,12 @@ def process_video(file: BinaryIO):
         resized_frame = frame.to_image().resize((224, 224))
         # yield frame
 
+
 def index_video():
     pass
 
-connection = pika.BlockingConnection('localhost')
+
+connection = pika.BlockingConnection("localhost")
 channel = connection.channel()
 
 connection.close()
