@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "video-indexer"
+version = "0.1.0"
+description = ""
+authors = ["Miroslav Hrabal <mhn@email.cz>"]
+readme = "README.md"
+packages = [{include = "video_indexer"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+av = "^9.0.1"
+pika = "^1.2.0"
+Pillow = "^9.0.1"
+
+
+[tool.poetry.group.dev.dependencies]
+flake8 = "^4.0.1"
+autopep8 = "^1.6.0"
+black = "^22.1.0"
+pytest = "^7.1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
