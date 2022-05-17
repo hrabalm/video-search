@@ -34,7 +34,7 @@ class ImageRecognitionRequest:
         size = self.image.size
         image_bytes = self.image.tobytes()
         image_format = cast(ColorMode, self.image.mode)
-        uncompressed = bson.dumps(
+        uncompressed = bson.encode(
             ImageRecognitionRequest._ImageRequestTD(
                 size=size, image_bytes=image_bytes, image_format=image_format
             )
@@ -58,7 +58,7 @@ class ImageRecognitionRequest:
     @staticmethod
     def frombytes(data) -> ImageRecognitionRequest:
         decompressed = lz4.block.decompress(data)
-        decoded = bson.loads(decompressed)
+        decoded = bson.decode(decompressed)
         typed = cast(ImageRecognitionRequest._ImageRequestTD, decoded)
         img = Image.frombytes(
             typed["image_format"],
