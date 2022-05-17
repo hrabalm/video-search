@@ -9,6 +9,9 @@ python = "^3.10"
 Flask = "^2.0.3"
 pymongo = "^4.0.2"
 
+[tool.poetry.group.dev.dependencies]
+pylint = "^2.13.8"
+
 [tool.poetry.dev-dependencies]
 black = "^22.1.0"
 isort = "^5.10.1"
