@@ -3,7 +3,7 @@ import logging
 import pika
 from constants_test import HOST, QUEUE_NAME
 from PIL import Image
-from shared import ImageRequest
+from shared import ImageRecognitionRequest
 from tagger import ImageTaggerResNet152V2
 
 logger = logging.getLogger()
@@ -13,7 +13,7 @@ tagger = ImageTaggerResNet152V2()
 
 def callback(ch, method, properties, body):
     print(f" [x] Received {body[:50]}")
-    img: Image.Image = ImageRequest.frombytes(body).img
+    img: Image.Image = ImageRecognitionRequest.frombytes(body).image
 
     tag = tagger.tag_image(img)
     print(f" [x] Computed tag: {tag}")

@@ -2,13 +2,13 @@
 import pika
 from constants_test import HOST, QUEUE_NAME
 from PIL import Image
-from shared import ImageRequest
+from shared import ImageRecognitionRequest
 
 img = Image.open("test_image.png").convert("RGB").resize((224, 224))
 
 
 def create_test_message():
-    msg = ImageRequest(img).tobytes()
+    msg = ImageRecognitionRequest(img).tobytes()
 
     return msg
 
