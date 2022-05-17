@@ -1,5 +1,7 @@
 # mock image
 
+from typing import Iterable
+
 from PIL import Image
 
 
@@ -31,6 +33,19 @@ def take_random_frames(video_file, count) -> list[Image.Image]:
         if i in selected_frames_indices:
             selected_frames.append(frame.to_image().resize((224, 224)))
     return selected_frames
+
+
+class VideoFramesProducerMock:
+    """Produces testing images."""
+
+    def __init__(self, width: int = 224, height: int = 224, sample_size=1000):
+        self.width = width
+        self.height = height
+
+        self._batch = [mock_empty_image() for _ in range(sample_size)]
+
+    def take(self) -> Iterable[Image.Image]:
+        return self._batch
 
 
 # mock requests, jobs, responses
