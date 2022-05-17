@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Collection
 
 import numpy as np
 
@@ -6,7 +7,7 @@ import numpy as np
 # to VRAM usage etc.)
 import tensorflow as tf
 from PIL import Image
-from shared import ImageTag, Tag
+from shared import ImageTags, Tag
 from tensorflow.keras.applications.resnet_v2 import (
     ResNet152V2,
     decode_predictions,
@@ -22,7 +23,11 @@ if len(physical_devices):
 
 class ImageTagger(ABC):
     @abstractmethod
-    def tag_image(self, img: Image.Image) -> ImageTag:
+    def tag_image(self, img: Image.Image) -> ImageTags:
+        pass
+
+    @abstractmethod
+    def tag_images(self, images: Collection[Image.Image]) -> list[ImageTags]:
         pass
 
 
@@ -31,7 +36,7 @@ class ImageTaggerResNet152V2(ImageTagger):
         self.source = "ResNet152V2"
         self.model = ResNet152V2(weights="imagenet")
 
-    def tag_image(self, img: Image.Image) -> ImageTag:
+    def tag_image(self, img: Image.Image) -> ImageTags:  # FIXME: to be removed
         x = image.img_to_array(img)
         x = np.expand_dims(x, axis=0)
         x = preprocess_input(x)
@@ -42,6 +47,14 @@ class ImageTaggerResNet152V2(ImageTagger):
         decoded_preds = decode_predictions(preds, top=3)[0]
         # print('Predicted:', decoded_preds)
         # print(decoded_preds)
-        return ImageTag(
+        return ImageTags(
             tags=[Tag(id, name, conf, self.source) for id, name, conf in decoded_preds]
         )
+
+    def tag_images(self, images: Collection[Image.Image]):
+        images = [image.img_to_array(x) for x in images]
+        images = [preprocess_input(x) for x in images]
+
+        preds = self.model.predict(images)
+        decoded_preds = decode_predictions(preds, top=3)  # noqa: F841
+        return []  # FIXME

@@ -1,7 +1,7 @@
 import os
 
 from PIL import Image
-from shared import ImageRequest
+from shared import ImageRecognitionRequest
 from tagger import ImageTaggerResNet152V2
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # don't use GPU during the testing
@@ -18,9 +18,9 @@ def test_ImageTaggerResNet152V2():
 
 def test_ImageRequestSerializeAndDeserialize():
     """Test, whether the image request succesfully serializes and deserializes"""
-    ir = ImageRequest(test_image)
+    ir = ImageRecognitionRequest(test_image)
     b = ir.tobytes()
-    d = ImageRequest.frombytes(b)
+    d = ImageRecognitionRequest.frombytes(b)
 
     # compare images byte by byte
-    assert ir.img.tobytes() == d.img.tobytes()
+    assert ir.image.tobytes() == d.image.tobytes()
