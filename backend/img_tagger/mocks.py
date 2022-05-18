@@ -50,7 +50,7 @@ class VideoFramesProducerMock:
         return self._batch
 
 
-class VideoFramerProducerMockWithPool:
+class VideoFramesProducerMockWithPool:
     """Produces testing images from a pool of list of images."""
 
     def __init__(self, pool: list[bytes]):
@@ -61,12 +61,12 @@ class VideoFramerProducerMockWithPool:
             raise Exception("Pool is smaller than requiered count of elements.")
 
     @staticmethod
-    def load(fileobj: BinaryIO) -> VideoFramerProducerMockWithPool:
+    def load(fileobj: BinaryIO) -> VideoFramesProducerMockWithPool:
         compressed = fileobj.read()
         pickled = lz4.frame.decompress(compressed)
         unpickled = pickle.loads(pickled)
 
-        return VideoFramerProducerMockWithPool(unpickled)
+        return VideoFramesProducerMockWithPool(unpickled)
 
     def save(self, fileobj: BinaryIO):
         pickled = pickle.dumps(self.pool)
@@ -76,7 +76,7 @@ class VideoFramerProducerMockWithPool:
     @staticmethod
     def from_video_file(
         filename: str, pool_size=1024, size=(224, 224)
-    ) -> VideoFramerProducerMockWithPool:
+    ) -> VideoFramesProducerMockWithPool:
         """Created from a given video file. Requires that all decoded and
         resized frames fit into memory at the same time."""
         frames = []
@@ -93,11 +93,11 @@ class VideoFramerProducerMockWithPool:
         selected = random.choices(frames, k=pool_size)
         print(f"{len(selected)=}")
 
-        return VideoFramerProducerMockWithPool(selected)
+        return VideoFramesProducerMockWithPool(selected)
 
 
 if __name__ == "__main__":
-    p = VideoFramerProducerMockWithPool.from_video_file(
+    p = VideoFramesProducerMockWithPool.from_video_file(
         "[HorribleSubs] Machikado Mazoku - 02 [1080p].mkv"
     )
     with open("frames.pickle", "wb") as f:
