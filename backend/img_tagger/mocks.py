@@ -1,7 +1,13 @@
 # mock image
 
-from typing import Iterable
+from __future__ import annotations
 
+import pickle
+import random
+from typing import BinaryIO, Iterable
+
+import av
+import lz4.frame
 from PIL import Image
 
 
@@ -15,10 +21,6 @@ def take_random_frames(video_file, count) -> list[Image.Image]:
         for _ in container.decode(video=0):
             counter += 1
         return counter
-
-    import random
-
-    import av
 
     random.seed(42)
     container = av.open(video_file)
@@ -46,6 +48,59 @@ class VideoFramesProducerMock:
 
     def take(self) -> Iterable[Image.Image]:
         return self._batch
+
+
+class VideoFramerProducerMockWithPool:
+    """Produces testing images from a pool of list of images."""
+
+    def __init__(self, pool: list[bytes]):
+        self.pool = pool
+
+    def take(self, n: int):
+        if n > len(self.pool):
+            raise Exception("Pool is smaller than requiered count of elements.")
+
+    @staticmethod
+    def load(fileobj: BinaryIO) -> VideoFramerProducerMockWithPool:
+        compressed = fileobj.read()
+        pickled = lz4.frame.decompress(compressed)
+        unpickled = pickle.loads(pickled)
+
+        return VideoFramerProducerMockWithPool(unpickled)
+
+    def save(self, fileobj: BinaryIO):
+        pickled = pickle.dumps(self.pool)
+        compressed = lz4.frame.compress(pickled)
+        fileobj.write(compressed)
+
+    @staticmethod
+    def from_video_file(
+        filename: str, pool_size=1024, size=(224, 224)
+    ) -> VideoFramerProducerMockWithPool:
+        """Created from a given video file. Requires that all decoded and
+        resized frames fit into memory at the same time."""
+        frames = []
+        for i, frame in enumerate(av.open(filename).decode(video=0)):
+            # maybe use different resize technique to save time?
+            # (bicubic by default)
+            image = frame.to_image().convert("RGB").resize(size).tobytes()
+            frames.append(image)
+
+            if i > 10 * pool_size:
+                # Don't read the whole video
+                break
+        print(f"{len(frames)=}")
+        selected = random.choices(frames, k=pool_size)
+        print(f"{len(selected)=}")
+
+        return VideoFramerProducerMockWithPool(selected)
+
+
+p = VideoFramerProducerMockWithPool.from_video_file(
+    "[HorribleSubs] Machikado Mazoku - 02 [1080p].mkv"
+)
+with open("frames.pickle", "wb") as f:
+    p.save(f)
 
 
 # mock requests, jobs, responses
