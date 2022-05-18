@@ -65,8 +65,7 @@ class VideoFramesProducerMockWithPool:
     @staticmethod
     def load(fileobj: BinaryIO) -> VideoFramesProducerMockWithPool:
         def from_png(x: bytes):
-            with io.BytesIO(x) as f:
-                return Image.open(f)
+            return Image.open(io.BytesIO(x), formats=["PNG"])
 
         compressed = fileobj.read()
         pickled = lz4.frame.decompress(compressed)

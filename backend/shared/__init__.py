@@ -31,35 +31,34 @@ class ImageRecognitionRequest:
     image: Image.Image
 
     def tobytes(self) -> bytes:
-        size = self.image.size
-        image_bytes = self.image.tobytes()
-        image_format = cast(ColorMode, self.image.mode)
-        uncompressed = bson.encode(
-            ImageRecognitionRequest._ImageRequestTD(
-                size=size, image_bytes=image_bytes, image_format=image_format
-            )
-        )
+        uncompressed = bson.encode(self.to_dict())
         compressed = lz4.block.compress(uncompressed)
 
         return compressed
 
-    class ImageRecognitionRequestTD(TypedDict):
-        pass
-
-    def todict(self) -> ImageRecognitionRequestTD:
-        return ImageRecognitionRequest.ImageRecognitionRequestTD()
+    def to_dict(self) -> _ImageRecognitionRequestTD:
+        return ImageRecognitionRequest._ImageRecognitionRequestTD(
+            size=self.image.size,
+            image_format=cast(ColorMode, self.image.mode),
+            image_bytes=self.image.tobytes(),
+        )
 
     @staticmethod
-    def fromdict(
-        x: ImageRecognitionRequest.ImageRecognitionRequestTD,
+    def from_dict(
+        x: ImageRecognitionRequest._ImageRecognitionRequestTD,
     ) -> ImageRecognitionRequest:
-        raise NotImplementedError
+        mode = x["image_format"]
+        size = x["size"]
+        data = x["image_bytes"]
+        image = Image.frombytes(mode, size, data)
+
+        return ImageRecognitionRequest(image)
 
     @staticmethod
     def frombytes(data) -> ImageRecognitionRequest:
         decompressed = lz4.block.decompress(data)
         decoded = bson.decode(decompressed)
-        typed = cast(ImageRecognitionRequest._ImageRequestTD, decoded)
+        typed = cast(ImageRecognitionRequest._ImageRecognitionRequestTD, decoded)
         img = Image.frombytes(
             typed["image_format"],
             typed["size"],
@@ -68,7 +67,7 @@ class ImageRecognitionRequest:
 
         return ImageRecognitionRequest(img)
 
-    class _ImageRequestTD(TypedDict):
+    class _ImageRecognitionRequestTD(TypedDict):
         size: Tuple[int, int]
         image_format: ColorMode
         image_bytes: RawImage
@@ -89,15 +88,15 @@ class ImageRecognitionRequestBatch:
     requests: list[ImageRecognitionRequest]
 
     def to_bytes(self, compression=None) -> bytes:
+        body = {"requests": [request.to_dict() for request in self.requests]}
+        encoded_body = bson.encode(body)
+        if compression:
+            encoded_body = compress[compression](encoded_body)
+
         serialization = {
             "compression": compression,
-            "body": {"requests": self.requests},
+            "body": encoded_body,
         }
-
-        serialization["body"] = bson.encode(serialization["body"])
-
-        if compression:
-            serialization["body"] = compress[compression](serialization["body"])
 
         serialization = bson.encode(serialization)
 
@@ -107,13 +106,19 @@ class ImageRecognitionRequestBatch:
     def from_bytes(x: bytes):
         serialization = bson.decode(x)
 
+        body = serialization["body"]
         if serialization["compression"]:
             compression = serialization["compression"]
-            serialization["body"] = decompress[compression](serialization["body"])
+            body = decompress[compression](serialization["body"])
 
-        serialization["body"] = bson.decode(serialization["body"])
+        requests_dicts: list[
+            ImageRecognitionRequest._ImageRecognitionRequestTD
+        ] = bson.decode(body)["requests"]
+        requests = [
+            ImageRecognitionRequest.from_dict(request) for request in requests_dicts
+        ]
 
-        return serialization["body"]
+        return ImageRecognitionRequestBatch(requests)
 
     # def to_bson(self):
     #     raise NotImplementedError
