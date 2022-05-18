@@ -96,11 +96,12 @@ class VideoFramerProducerMockWithPool:
         return VideoFramerProducerMockWithPool(selected)
 
 
-p = VideoFramerProducerMockWithPool.from_video_file(
-    "[HorribleSubs] Machikado Mazoku - 02 [1080p].mkv"
-)
-with open("frames.pickle", "wb") as f:
-    p.save(f)
+if __name__ == "__main__":
+    p = VideoFramerProducerMockWithPool.from_video_file(
+        "[HorribleSubs] Machikado Mazoku - 02 [1080p].mkv"
+    )
+    with open("frames.pickle", "wb") as f:
+        p.save(f)
 
 
 # mock requests, jobs, responses

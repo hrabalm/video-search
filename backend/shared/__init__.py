@@ -79,23 +79,48 @@ class ImageRecognitionRequest:
         # but small
 
 
+compress = {"lz4": lz4.block.compress}
+
+decompress = {"lz4": lz4.block.decompress}
+
+
 @dataclass
 class ImageRecognitionRequestBatch:
     requests: list[ImageRecognitionRequest]
 
-    def to_bytes(self, compression=None):
-        raise NotImplementedError
+    def to_bytes(self, compression=None) -> bytes:
+        serialization = {
+            "compression": compression,
+            "body": {"requests": self.requests},
+        }
+
+        serialization["body"] = bson.encode(serialization["body"])
+
+        if compression:
+            serialization["body"] = compress[compression](serialization["body"])
+
+        serialization = bson.encode(serialization)
+
+        return serialization
 
     @staticmethod
     def from_bytes(x: bytes):
-        raise NotImplementedError
+        serialization = bson.decode(x)
 
-    def to_bson(self):
-        raise NotImplementedError
+        if serialization["compression"]:
+            compression = serialization["compression"]
+            serialization["body"] = decompress[compression](serialization["body"])
 
-    @staticmethod
-    def from_bson(x):  # FIXME: type annotation
-        raise NotImplementedError
+        serialization["body"] = bson.decode(serialization["body"])
+
+        return serialization["body"]
+
+    # def to_bson(self):
+    #     raise NotImplementedError
+
+    # @staticmethod
+    # def from_bson(x):  # FIXME: type annotation
+    #     raise NotImplementedError
 
 
 class Tag(NamedTuple):
