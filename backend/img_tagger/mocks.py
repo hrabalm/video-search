@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import io
 import pickle
 import random
 from typing import BinaryIO, Iterable
@@ -53,7 +54,7 @@ class VideoFramesProducerMock:
 class VideoFramesProducerMockWithPool:
     """Produces testing images from a pool of list of images."""
 
-    def __init__(self, pool: list[bytes]):
+    def __init__(self, pool: list[Image.Image]):
         self.pool = pool
 
     def take(self, n: int):
@@ -62,14 +63,25 @@ class VideoFramesProducerMockWithPool:
 
     @staticmethod
     def load(fileobj: BinaryIO) -> VideoFramesProducerMockWithPool:
+        def from_png(x: bytes):
+            with io.BytesIO(x) as f:
+                return Image.open(f)
+
         compressed = fileobj.read()
         pickled = lz4.frame.decompress(compressed)
         unpickled = pickle.loads(pickled)
+        loaded = [from_png(image) for image in unpickled]
 
-        return VideoFramesProducerMockWithPool(unpickled)
+        return VideoFramesProducerMockWithPool(loaded)
 
     def save(self, fileobj: BinaryIO):
-        pickled = pickle.dumps(self.pool)
+        def to_png(image: Image.Image):
+            with io.BytesIO() as f:
+                image.save(f, "PNG")
+                return f.getvalue()
+
+        pool = [to_png(image) for image in self.pool]
+        pickled = pickle.dumps(pool)
         compressed = lz4.frame.compress(pickled)
         fileobj.write(compressed)
 
@@ -83,7 +95,7 @@ class VideoFramesProducerMockWithPool:
         for i, frame in enumerate(av.open(filename).decode(video=0)):
             # maybe use different resize technique to save time?
             # (bicubic by default)
-            image = frame.to_image().convert("RGB").resize(size).tobytes()
+            image = frame.to_image().convert("RGB").resize(size)
             frames.append(image)
 
             if i > 10 * pool_size:
@@ -98,7 +110,8 @@ class VideoFramesProducerMockWithPool:
 
 if __name__ == "__main__":
     p = VideoFramesProducerMockWithPool.from_video_file(
-        "[HorribleSubs] Machikado Mazoku - 02 [1080p].mkv"
+        "[HorribleSubs] Machikado Mazoku - 02 [1080p].mkv",
+        pool_size=256,
     )
     with open("frames.pickle", "wb") as f:
         p.save(f)
