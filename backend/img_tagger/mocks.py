@@ -59,6 +59,7 @@ class VideoFramesProducerMockWithPool:
     def take(self, n: int):
         if n > len(self.pool):
             raise Exception("Pool is smaller than requiered count of elements.")
+        return self.pool[:n]
 
     @staticmethod
     def load(fileobj: BinaryIO) -> VideoFramesProducerMockWithPool:
