@@ -54,6 +54,7 @@ class ImageTaggerResNet152V2(ImageTagger):
     def tag_images(self, images: Collection[Image.Image]):
         images = [image.img_to_array(x) for x in images]
         images = [preprocess_input(x) for x in images]
+        images = tf.convert_to_tensor(images)
 
         preds = self.model.predict(images)
         decoded_preds = decode_predictions(preds, top=3)  # noqa: F841
