@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Collection
 
+import numpy as np
+
 # Keras has to be imported after the Tensorflow is properly setup (in regards
 # to VRAM usage etc.)
 import tensorflow as tf
@@ -54,12 +56,19 @@ class ImageTaggerEfficientNetV2B0(ImageTagger):
 
     def tag_images(self, images: Collection[Image.Image]):
         images = [image.img_to_array(x) for x in images]
+        # for some strange reason, this drastically improves performance
+        images = np.array(images)
         images = tf.convert_to_tensor(images)
+
+        # print(tf.shape(images))  # FIXME
 
         preds = self.model.predict(images)
         # decode the results into a list of tuples (class, description,
         # probability), one such list for each sample in the batch
         decoded_preds = decode_predictions(preds, top=3)  # noqa: F841
+
+        # print(decoded_preds) # FIXME
+
         return []  # FIXME
 
         # return ImageTags(
