@@ -1,24 +1,37 @@
 repos:
     - repo: https://github.com/pre-commit/pre-commit-hooks
-      rev: v3.2.0
+      rev: v4.3.0
       hooks:
           - id: trailing-whitespace
           - id: end-of-file-fixer
           - id: check-yaml
           - id: check-added-large-files
     - repo: https://github.com/psf/black
-      rev: 22.1.0
+      rev: 22.8.0
       hooks:
           - id: black
     - repo: https://github.com/PyCQA/isort
-      rev: 5.9.3
+      rev: 5.10.1
       hooks:
           - id: isort
+            args: ["--profile", "black", "--filter-files"]
     - repo: https://github.com/PyCQA/flake8
-      rev: 4.0.1
+      rev: 5.0.4
       hooks:
           - id: flake8
     - repo: https://github.com/pre-commit/mirrors-eslint
-      rev: v7.32.0
+      rev: v8.24.0
       hooks:
           - id: eslint
+    # export python requirements
+    - repo: https://github.com/pdm-project/pdm
+      rev: 2.1.4
+      hooks:
+        - id: pdm-export
+          # command arguments, e.g.:
+          args: ['-p', 'backend', '-o', 'backend/requirements.txt', '--without-hashes', '--production']
+          files: ^backend/pdm.lock$
+        - id: pdm-export
+          # command arguments, e.g.:
+          args: ['-p', 'backend', '-o', 'backend/requirements-dev.txt', '--without-hashes', '--dev']
+          files: ^backend/pdm.lock$
