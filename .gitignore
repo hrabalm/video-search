@@ -1,3 +1,5 @@
 **/.pyre
 **/.idea
 **/__pycache__
+**/.pdm.toml
+
