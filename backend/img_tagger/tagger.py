@@ -7,7 +7,6 @@ import numpy as np
 # to VRAM usage etc.)
 import tensorflow as tf
 from PIL import Image
-from shared import ImageTags
 from tensorflow.keras.applications import EfficientNetV2B0
 from tensorflow.keras.applications.resnet_v2 import (
     ResNet152V2,
@@ -15,6 +14,8 @@ from tensorflow.keras.applications.resnet_v2 import (
     preprocess_input,
 )
 from tensorflow.keras.preprocessing import image
+
+from shared import ImageTags
 
 # If there is a GPU available, enable memory_growth
 physical_devices = tf.config.list_physical_devices("GPU")

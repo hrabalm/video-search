@@ -1,8 +1,9 @@
 import os
 
 from PIL import Image
-from shared import ImageRecognitionRequest
 from tagger import ImageTaggerResNet152V2
+
+from shared import ImageRecognitionRequest
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # don't use GPU during the testing
 

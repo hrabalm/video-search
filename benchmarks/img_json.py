@@ -2,7 +2,6 @@ import base64
 import json
 import timeit
 import zlib
-from os import times
 
 import bson
 import lz4.frame

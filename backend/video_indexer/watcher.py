@@ -1,9 +1,10 @@
-FOLDERS_TO_WATCH = []
-EXTENSIONS = ["mp4", "mkv", "avi", "flv"]
-
 import time
 
 from watchdog.observers import Observer
+
+FOLDERS_TO_WATCH = []
+EXTENSIONS = ["mp4", "mkv", "avi", "flv"]
+
 
 if __name__ == "__main__":
     observer = Observer()

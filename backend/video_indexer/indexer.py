@@ -2,7 +2,6 @@ from typing import BinaryIO
 
 import av
 import pika
-from PIL import Image
 
 
 def process_video(file: BinaryIO):
@@ -10,7 +9,7 @@ def process_video(file: BinaryIO):
 
     for frame in container.decode(video=0):
         resized_frame = frame.to_image().resize((224, 224))
-        # yield frame
+        yield resized_frame
 
 
 def index_video():
