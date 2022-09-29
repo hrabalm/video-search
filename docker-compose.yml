@@ -1,17 +1,5 @@
 version: '3'
 services:
-  db:
-    image: postgres:14
-    environment:
-      - POSTGRES_PASSWORD=${SQL_PASSWORD}
-    ports:
-      - "5432:5432"
-    # volumes:
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${SQL_USER}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
   mongo:
     image: mongo:5
     # command: --serviceExecutor adaptive
