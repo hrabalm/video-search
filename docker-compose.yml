@@ -33,5 +33,3 @@ services:
       - "80:3000"
     volumes:
       - "./client:/app"
-  rabbitmq:
-    image: rabbitmq:3.9
