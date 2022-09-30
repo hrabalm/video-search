@@ -7,10 +7,11 @@ RUN pip install -U pip setuptools wheel
 RUN pip install pdm
 
 COPY pyproject.toml pdm.lock /app/
-RUN pdm install --prod --no-lock --no-editable
+# RUN pdm install --prod --no-lock --no-editable
+RUN pdm install --dev --no-lock --no-editable
 
 COPY . .
 
 EXPOSE 5000
 
-CMD ["pdm", "run", "python", "app.py", "api"]
+CMD ["pdm", "run", "api"]
