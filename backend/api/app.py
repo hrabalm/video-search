@@ -1,5 +1,6 @@
 from flask import Flask, request
-from models import Tags, Videos
+
+from api.models import Tags, Videos
 
 app = Flask(__name__)
 

@@ -1,7 +1,8 @@
 import json
 
 from bson import json_util
-from db import db
+
+from api.db import db
 
 
 def to_json(x):
