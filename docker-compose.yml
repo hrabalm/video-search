@@ -1,8 +1,7 @@
 version: '3'
 services:
   mongo:
-    image: mongo:5
-    # command: --serviceExecutor adaptive
+    image: mongo:6
     ports:
       - "27017:27017"
     healthcheck:
@@ -11,7 +10,7 @@ services:
       timeout: 5s
       retries: 10
   api:
-    build: "./backend/api"
+    build: "./backend"
     ports:
       - "8080:5000"
     volumes:
