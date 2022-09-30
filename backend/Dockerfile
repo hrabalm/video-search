@@ -13,4 +13,4 @@ COPY . .
 
 EXPOSE 5000
 
-CMD ["pdm", "run", "python", "app.py"]
+CMD ["pdm", "run", "python", "app.py", "api"]
