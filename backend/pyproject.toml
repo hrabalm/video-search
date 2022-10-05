@@ -15,6 +15,7 @@ dependencies = [
     "pymongo",
     "click",
     "dramatiq[redis,watch]>=1.13.0",
+    "more-itertools>=8.14.0",
 ]
 requires-python = ">=3.10,<3.11"
 license = {text = "MIT"}

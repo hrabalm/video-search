@@ -413,6 +413,12 @@ requires_python = ">=3.6"
 summary = "McCabe checker, plugin for flake8"
 
 [[package]]
+name = "more-itertools"
+version = "8.14.0"
+requires_python = ">=3.5"
+summary = "More routines for operating on iterables, beyond itertools"
+
+[[package]]
 name = "mypy"
 version = "0.971"
 requires_python = ">=3.6"
@@ -903,7 +909,7 @@ dependencies = [
 
 [metadata]
 lock_version = "4.0"
-content_hash = "sha256:39c03c8e4a78e90f37d4067fde351a8d6b6136d79492f480065eab1e4c68fa00"
+content_hash = "sha256:dc17c6aff284081ddbfe342f26ad56818cff0ddaf123075a9c3e190f9164d9e4"
 
 [metadata.files]
 "absl-py 1.2.0" = [
@@ -1480,6 +1486,10 @@ content_hash = "sha256:39c03c8e4a78e90f37d4067fde351a8d6b6136d79492f480065eab1e4
 "mccabe 0.7.0" = [
     {url = "https://files.pythonhosted.org/packages/27/1a/1f68f9ba0c207934b35b86a8ca3aad8395a3d6dd7921c0686e23853ff5a9/mccabe-0.7.0-py2.py3-none-any.whl", hash = "sha256:6c2d30ab6be0e4a46919781807b4f0d834ebdd6c6e3dca0bda5a15f863427b6e"},
     {url = "https://files.pythonhosted.org/packages/e7/ff/0ffefdcac38932a54d2b5eed4e0ba8a408f215002cd178ad1df0f2806ff8/mccabe-0.7.0.tar.gz", hash = "sha256:348e0240c33b60bbdf4e523192ef919f28cb2c3d7d5c7794f74009290f236325"},
+]
+"more-itertools 8.14.0" = [
+    {url = "https://files.pythonhosted.org/packages/0b/ff/1ad78678bee731ae5414ea5e97396b3f91de32186028daa614d322ac5a8b/more_itertools-8.14.0-py3-none-any.whl", hash = "sha256:1bc4f91ee5b1b31ac7ceacc17c09befe6a40a503907baf9c839c229b5095cfd2"},
+    {url = "https://files.pythonhosted.org/packages/c7/0c/fad24ca2c9283abc45a32b3bfc2a247376795683449f595ff1280c171396/more-itertools-8.14.0.tar.gz", hash = "sha256:c09443cd3d5438b8dafccd867a6bc1cb0894389e90cb53d227456b0b0bccb750"},
 ]
 "mypy 0.971" = [
     {url = "https://files.pythonhosted.org/packages/01/2d/7aab0a38e05dcaf14bf1f3e238f1c1a6f7bc16065eb1db8ffed62f860d27/mypy-0.971-cp39-cp39-macosx_10_9_universal2.whl", hash = "sha256:1f7656b69974a6933e987ee8ffb951d836272d6c0f81d727f1d0e2696074d9e6"},
