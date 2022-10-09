@@ -736,6 +736,12 @@ requires_python = ">=3.7"
 summary = "Easily download, build, install, upgrade, and uninstall Python packages"
 
 [[package]]
+name = "simple-file-checksum"
+version = "1.2.2"
+requires_python = ">=3.6"
+summary = "Returns the MD5, SHA1, SHA256, SHA384, or SHA512 checksum of a file."
+
+[[package]]
 name = "six"
 version = "1.16.0"
 requires_python = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
@@ -1005,7 +1011,7 @@ dependencies = [
 
 [metadata]
 lock_version = "4.0"
-content_hash = "sha256:81282138a8417ad1642b7da53f6020b35aa668977a8c9e8d6f6e579bfedb9235"
+content_hash = "sha256:ea3e9ad68e7babf8931123ca7b75b22b862d03e03db851325bc24f6589f1047a"
 
 [metadata.files]
 "absl-py 1.2.0" = [
@@ -2099,6 +2105,10 @@ content_hash = "sha256:81282138a8417ad1642b7da53f6020b35aa668977a8c9e8d6f6e579bf
 "setuptools 65.4.0" = [
     {url = "https://files.pythonhosted.org/packages/4c/61/86c94ae2cccb05749abfb1b2961125d40368c8f03ac59275550c45e634f1/setuptools-65.4.0.tar.gz", hash = "sha256:a8f6e213b4b0661f590ccf40de95d28a177cd747d098624ad3f69c40287297e9"},
     {url = "https://files.pythonhosted.org/packages/d5/e6/e3a70a77dda22766b9ef4ff47ff8320720311e78d11d1401baffca3f6879/setuptools-65.4.0-py3-none-any.whl", hash = "sha256:c2d2709550f15aab6c9110196ea312f468f41cd546bceb24127a1be6fdcaeeb1"},
+]
+"simple-file-checksum 1.2.2" = [
+    {url = "https://files.pythonhosted.org/packages/5e/c1/42d6db2e883a7eedd1ddcde4dc2da8733011dab0dfeefb48b3587c17c4cf/simple-file-checksum-1.2.2.tar.gz", hash = "sha256:7cd9ca136704c793f9dadc0153b97f44063fb60b5dd1354b48bda82ad8c5fb94"},
+    {url = "https://files.pythonhosted.org/packages/f7/86/8180802f9428249584e213fa7ada3fca175fe311fc9be4c7d71ab8fc57f2/simple_file_checksum-1.2.2-py3-none-any.whl", hash = "sha256:5d27dd0aae4c5ae8aa92bd87648440f7277f75a277e12c389ad4c644cb1b0603"},
 ]
 "six 1.16.0" = [
     {url = "https://files.pythonhosted.org/packages/71/39/171f1c67cd00715f190ba0b100d606d440a28c93c7714febeca8b79af85e/six-1.16.0.tar.gz", hash = "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"},
