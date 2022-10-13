@@ -1,21 +1,30 @@
 import typing
 from collections import defaultdict
-from functools import reduce
+from typing import Collection, Iterable
 
 import av
+import PIL.Image
 from more_itertools import ichunked
 from pydantic import BaseModel
 from simple_file_checksum import get_checksum
-from toolz import count
+from toolz import concat, count
 
 from classifiers import AbstractClassifier
-from classifiers.prediction import Prediction
+from classifiers.prediction import GroupedPrediction, Prediction
 
 
 class FileHash(BaseModel):
     filename: str
     hash_function: str
     checksum: str
+
+
+class DecodedFrame(BaseModel):
+    image: PIL.Image.Image
+    pts: int
+
+    class Config:
+        arbitrary_types_allowed = True
 
 
 def file_hash(filename, hash_function="SHA256") -> FileHash:
@@ -37,8 +46,10 @@ def read_frames(file: str | typing.BinaryIO, keyframes_only=False):
             yield frame
 
 
-def resize_frame(frame, resolution):
-    return frame.to_image().convert("RGB").resize(resolution)
+def resize_frame(frame, resolution) -> DecodedFrame:
+    return DecodedFrame(
+        image=frame.to_image().convert("RGB").resize(resolution), pts=frame.pts
+    )
 
 
 def read_frames_resized(
@@ -55,8 +66,19 @@ def count_keyframes(filename) -> int:
 
 
 def classify_chunks(chunks, classifier: AbstractClassifier):
-    classified_chunks = (classifier.classify_batch(list(chunk)) for chunk in chunks)
-    classified_frames = reduce(lambda x, y: x + y, classified_chunks, [])
+    def classify_chunk(chunk: Iterable[DecodedFrame]):
+        chunk = list(chunk)
+        images = map(lambda f: f.image, chunk)
+        pts = map(lambda f: f.pts, chunk)
+        predictions = classifier.classify_batch(list(images))
+        predictions_with_pts = [
+            Prediction(score=pred.score, label=pred.label, pts=pred_pts)
+            for pred, pred_pts in zip(predictions, pts)
+        ]
+        return predictions_with_pts
+
+    classified_chunks = list(map(classify_chunk, chunks))
+    classified_frames = list(concat(classified_chunks))
     return classified_frames
 
 
@@ -67,6 +89,20 @@ def index_video_file(filename: str | typing.BinaryIO, classifier: AbstractClassi
 
 def combine_labels(labels):
     return labels
+
+
+def group_predictions(
+    predictions: Collection[Prediction],
+) -> Collection[GroupedPrediction]:
+    predictions_by_label = defaultdict(lambda: [])
+
+    for prediction in predictions:
+        predictions_by_label[prediction.label].append(prediction)
+
+    return [
+        GroupedPrediction(label=label, predictions=predictions_by_label[label])
+        for label in predictions_by_label
+    ]
 
 
 def tag_video(

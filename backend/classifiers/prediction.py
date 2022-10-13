@@ -1,10 +1,12 @@
+from typing import Optional
+
 from pydantic import BaseModel
 
 
 class Prediction(BaseModel):
     score: float
     label: str
-    # TODO: add frame index
+    pts: Optional[int] = None
 
 
 class GroupedPrediction(BaseModel):
@@ -14,5 +16,8 @@ class GroupedPrediction(BaseModel):
     def count(self) -> int:
         return len(self.predictions)
 
+    def best(self) -> Prediction:
+        return max(self.predictions, key=lambda p: p.score)
+
     def best_score(self) -> float:
-        return float(max(p.score for p in self.predictions))
+        return self.best().score
