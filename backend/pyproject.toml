@@ -23,6 +23,7 @@ dependencies = [
     "torchvision>=0.13.1",
     "pydantic>=1.10.2",
     "simple-file-checksum>=1.2.2",
+    "attrs>=22.1.0",
 ]
 requires-python = ">=3.10,<3.11"
 license = {text = "MIT"}
