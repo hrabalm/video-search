@@ -4,3 +4,4 @@
 **/.pdm.toml
 *.pickle
 *.cbz
+*.png
