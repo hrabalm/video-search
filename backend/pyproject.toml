@@ -24,6 +24,7 @@ dependencies = [
     "pydantic>=1.10.2",
     "simple-file-checksum>=1.2.2",
     "attrs>=22.1.0",
+    "timm>=0.6.11",
 ]
 requires-python = ">=3.10,<3.11"
 license = {text = "MIT"}

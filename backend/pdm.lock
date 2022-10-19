@@ -838,6 +838,18 @@ requires_python = ">=3.7"
 summary = "ANSI color formatting for output in terminal"
 
 [[package]]
+name = "timm"
+version = "0.6.11"
+requires_python = ">=3.6"
+summary = "(Unofficial) PyTorch Image Models"
+dependencies = [
+    "huggingface-hub",
+    "pyyaml",
+    "torch>=1.7",
+    "torchvision",
+]
+
+[[package]]
 name = "tokenizers"
 version = "0.12.1"
 summary = "Fast and Customizable Tokenizers"
@@ -1011,7 +1023,7 @@ dependencies = [
 
 [metadata]
 lock_version = "4.0"
-content_hash = "sha256:9f722b4c8e789b70ee310463f3edf3800f56124f57e679de6b0109f431f55b33"
+content_hash = "sha256:3de43ca04a57e845f6e49e2d6dd9a62428e665b86f64e1dadbddf1906535993c"
 
 [metadata.files]
 "absl-py 1.2.0" = [
@@ -2171,6 +2183,10 @@ content_hash = "sha256:9f722b4c8e789b70ee310463f3edf3800f56124f57e679de6b0109f43
 "termcolor 2.0.1" = [
     {url = "https://files.pythonhosted.org/packages/38/32/a987f128a4e8e9baf8ea9fb0a63ae4b6c3fdeea561abd81dc5f41131f79c/termcolor-2.0.1-py3-none-any.whl", hash = "sha256:7e597f9de8e001a3208c4132938597413b9da45382b6f1d150cff8d062b7aaa3"},
     {url = "https://files.pythonhosted.org/packages/c1/ee/ad1f448e360e4b662fbff9e75cd210b73ad79998ce6483086e9df5b8e7e2/termcolor-2.0.1.tar.gz", hash = "sha256:6b2cf769e93364a2676e1de56a7c0cff2cf5bd07f37e9cc80b0dd6320ebfe388"},
+]
+"timm 0.6.11" = [
+    {url = "https://files.pythonhosted.org/packages/0b/98/2a69e4c66622b860ffabb5aa44d8a58df3e258cb3c1baf1ecc9bdb6f7ce4/timm-0.6.11.tar.gz", hash = "sha256:09568842b65abbd8c99864ab893ec0902f8ad577d0112b45e1323e72ca7b3fa5"},
+    {url = "https://files.pythonhosted.org/packages/19/99/504af0c961e6b6a9494447b3d83d72b79969e9ac17b89394ae343583fb0c/timm-0.6.11-py3-none-any.whl", hash = "sha256:8a10e536ecc7caf32a7e42a612a1ae561a1e0d3f1aa836905855f8aff2efa644"},
 ]
 "tokenizers 0.12.1" = [
     {url = "https://files.pythonhosted.org/packages/03/78/8ae719924560be4b8513b50e6af4bc76d7e71fa00e6ffcdff03a3d152f44/tokenizers-0.12.1-cp37-cp37m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:ae6c04b629ac2cd2f695739988cb70b9bd8d5e7f849f5b14c4510e942bee5770"},
