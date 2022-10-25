@@ -6,7 +6,7 @@ import tensorflow as tf
 from toolz import compose_left
 
 from classifiers.abstractclassifier import AbstractClassifier
-from classifiers.prediction import Prediction
+from classifiers.prediction import PerFramePrediction
 
 # If there is a GPU available, enable memory_growth
 physical_devices = tf.config.list_physical_devices("GPU")
@@ -17,11 +17,13 @@ if len(physical_devices):
 local = threading.local()
 
 
-def to_prediction(decoded_prediction: list[tuple]) -> Prediction:
+def to_prediction(decoded_prediction: list[tuple]) -> PerFramePrediction:
     """Converts from tensorflow prediction output to our `Prediction
     representation.
     `"""
-    return Prediction(score=decoded_prediction[0][2], label=decoded_prediction[0][1])
+    return PerFramePrediction(
+        score=decoded_prediction[0][2], label=decoded_prediction[0][1]
+    )
 
 
 class EfficientNetClassifier(AbstractClassifier):
@@ -44,6 +46,10 @@ class EfficientNetClassifier(AbstractClassifier):
         results = map(to_prediction, decoded_predictions)
         return list(results)
 
+    @property
+    def required_resolution(self) -> tuple[int, int]:
+        return (224, 224)
+
 
 class EfficientNetClassifierLarge(AbstractClassifier):
     def __init__(self):
@@ -64,6 +70,10 @@ class EfficientNetClassifierLarge(AbstractClassifier):
         )
         results = map(to_prediction, decoded_predictions)
         return list(results)
+
+    @property
+    def required_resolution(self) -> tuple[int, int]:
+        return (224, 224)
 
 
 def get_classifier(classifier_type: type):

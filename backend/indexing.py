@@ -10,7 +10,7 @@ from simple_file_checksum import get_checksum
 from toolz import concat, count
 
 from classifiers import AbstractClassifier
-from classifiers.prediction import GroupedPrediction, Prediction
+from classifiers.prediction import GroupedPerFramePrediction, PerFramePrediction
 
 
 class FileHash(BaseModel):
@@ -72,7 +72,7 @@ def classify_chunks(chunks, classifier: AbstractClassifier):
         pts = map(lambda f: f.pts, chunk)
         predictions = classifier.classify_batch(list(images))
         predictions_with_pts = [
-            Prediction(score=pred.score, label=pred.label, pts=pred_pts)
+            PerFramePrediction(score=pred.score, label=pred.label, pts=pred_pts)
             for pred, pred_pts in zip(predictions, pts)
         ]
         return predictions_with_pts
@@ -87,20 +87,16 @@ def index_video_file(filename: str | typing.BinaryIO, classifier: AbstractClassi
     raise NotImplementedError
 
 
-def combine_labels(labels):
-    return labels
-
-
 def group_predictions(
-    predictions: Collection[Prediction],
-) -> Collection[GroupedPrediction]:
+    predictions: Collection[PerFramePrediction],
+) -> Collection[GroupedPerFramePrediction]:
     predictions_by_label = defaultdict(lambda: [])
 
     for prediction in predictions:
         predictions_by_label[prediction.label].append(prediction)
 
     return [
-        GroupedPrediction(label=label, predictions=predictions_by_label[label])
+        GroupedPerFramePrediction(label=label, predictions=predictions_by_label[label])
         for label in predictions_by_label
     ]
 
@@ -111,11 +107,11 @@ def tag_video(
     chunk_size: int = 1000,
     keyframes_only=False,
 ):
-    frames = read_frames_resized(file, (224, 224), keyframes_only)
+    frames = read_frames_resized(file, classifier.required_resolution, keyframes_only)
     frame_chunks = ichunked(frames, chunk_size)
     classified_frames = classify_chunks(frame_chunks, classifier)
-    video_tags = combine_labels(classified_frames)
-    return video_tags
+    grouped_predictions = group_predictions(classified_frames)
+    return grouped_predictions
 
 
 def tag_video_file(
@@ -128,7 +124,7 @@ def tag_video_file(
         return tag_video(f, classifier, chunk_size, keyframes_only)
 
 
-def select_tags(predictions: list[Prediction], min_score):
+def select_tags(predictions: list[PerFramePrediction], min_score):
     return list(
         filter(
             lambda pred: pred.score >= min_score,
@@ -137,7 +133,7 @@ def select_tags(predictions: list[Prediction], min_score):
     )
 
 
-def group_tags(predictions: list[Prediction]) -> dict[str, Prediction]:
+def group_tags(predictions: list[PerFramePrediction]) -> dict[str, PerFramePrediction]:
     predictions_by_label = defaultdict(lambda: [])
     for pred in predictions:
         predictions_by_label[pred.label].append(pred)

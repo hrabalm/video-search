@@ -4,7 +4,7 @@ from typing import Collection
 import transformers
 
 from classifiers.abstractclassifier import AbstractClassifier
-from classifiers.prediction import Prediction
+from classifiers.prediction import PerFramePrediction
 
 
 class VitClassifier(AbstractClassifier):
@@ -26,10 +26,15 @@ class VitClassifier(AbstractClassifier):
             decoded_predictions,
         )
         results = map(
-            lambda x: Prediction(score=x["score"], label=x["label"]), top1_predictions
+            lambda x: PerFramePrediction(score=x["score"], label=x["label"]),
+            top1_predictions,
         )
 
         return list(results)
+
+    @property
+    def required_resolution(self) -> tuple[int, int]:
+        return (224, 224)
 
 
 class VitClassifierLarge(AbstractClassifier):
@@ -52,10 +57,15 @@ class VitClassifierLarge(AbstractClassifier):
             decoded_predictions,
         )
         results = map(
-            lambda x: Prediction(score=x["score"], label=x["label"]), top1_predictions
+            lambda x: PerFramePrediction(score=x["score"], label=x["label"]),
+            top1_predictions,
         )
 
         return list(results)
+
+    @property
+    def required_resolution(self) -> tuple[int, int]:
+        return (224, 224)
 
 
 class HuggingFaceImageClassifier(AbstractClassifier):
@@ -79,7 +89,12 @@ class HuggingFaceImageClassifier(AbstractClassifier):
             decoded_predictions,
         )
         results = map(
-            lambda x: Prediction(score=x["score"], label=x["label"]), top1_predictions
+            lambda x: PerFramePrediction(score=x["score"], label=x["label"]),
+            top1_predictions,
         )
 
         return list(results)
+
+    @property
+    def required_resolution(self) -> tuple[int, int]:
+        return (224, 224)
