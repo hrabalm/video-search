@@ -160,34 +160,3 @@ def annote_image(image, text: str):
 
 if __name__ == "__main__":
     pass
-    # tests
-    # raw_results = tag_video_file(
-    #     "/home/mhn/videos/bbb_sunflower_1080p_30fps_normal.mp4",
-    #     EfficientNetClassifier(),
-    # )
-    # # print(tags)
-
-    # import pickle
-
-    # # with open("raw_results.pickle", "wb") as f:
-    # #     pickle.dump(raw_results, f)
-
-    # from collections import defaultdict
-
-    # unique_tags = set()
-    # histogram = defaultdict(lambda: 0)
-    # max_conf = defaultdict(lambda: 0.0)
-
-    # # filtered_tags = filter(lambda tag: tag[0][2] > 0.5, tags)
-
-    # # all_tags = set(tag[0][1] for tag in filtered_tags)
-    # # print(all_tags)
-
-    # for tag in raw_results:
-    #     _, name, conf = tag[0]
-    #     unique_tags.add(name)
-    #     histogram[name] += 1
-    #     max_conf[name] = max(max_conf[name], conf)
-
-    # results = [(max_conf[name], histogram[name], name) for name in unique_tags]
-    # print(results)
