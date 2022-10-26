@@ -26,7 +26,7 @@ class VitClassifier(AbstractClassifier):
             decoded_predictions,
         )
         results = map(
-            lambda x: PerFramePrediction(score=x["score"], label=x["label"]),
+            lambda x: [PerFramePrediction(score=x["score"], label=x["label"])],
             top1_predictions,
         )
 
@@ -57,7 +57,7 @@ class VitClassifierLarge(AbstractClassifier):
             decoded_predictions,
         )
         results = map(
-            lambda x: PerFramePrediction(score=x["score"], label=x["label"]),
+            lambda x: [PerFramePrediction(score=x["score"], label=x["label"])],
             top1_predictions,
         )
 
@@ -89,7 +89,7 @@ class HuggingFaceImageClassifier(AbstractClassifier):
             decoded_predictions,
         )
         results = map(
-            lambda x: PerFramePrediction(score=x["score"], label=x["label"]),
+            lambda x: [PerFramePrediction(score=x["score"], label=x["label"])],
             top1_predictions,
         )
 

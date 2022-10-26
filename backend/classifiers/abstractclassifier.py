@@ -8,11 +8,13 @@ class AbstractClassifier(abc.ABC):
     def __init__(self):
         pass
 
-    def classify(self, image) -> classifiers.prediction.PerFramePrediction:
+    def classify(self, image) -> list[classifiers.prediction.PerFramePrediction]:
         return self.classify_batch([image])[0]
 
     @abc.abstractmethod
-    def classify_batch(self, batch) -> list[classifiers.prediction.PerFramePrediction]:
+    def classify_batch(
+        self, batch
+    ) -> list[list[classifiers.prediction.PerFramePrediction]]:
         raise NotImplementedError
 
     @property

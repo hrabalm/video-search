@@ -17,13 +17,15 @@ if len(physical_devices):
 local = threading.local()
 
 
-def to_prediction(decoded_prediction: list[tuple]) -> PerFramePrediction:
+def to_prediction(decoded_prediction: list[tuple]) -> list[PerFramePrediction]:
     """Converts from tensorflow prediction output to our `Prediction
     representation.
     `"""
-    return PerFramePrediction(
-        score=decoded_prediction[0][2], label=decoded_prediction[0][1]
-    )
+    return [
+        PerFramePrediction(
+            score=decoded_prediction[0][2], label=decoded_prediction[0][1]
+        )
+    ]
 
 
 class EfficientNetClassifier(AbstractClassifier):

@@ -72,10 +72,14 @@ def classify_chunks(chunks, classifier: AbstractClassifier):
         pts = map(lambda f: f.pts, chunk)
         predictions = classifier.classify_batch(list(images))
         predictions_with_pts = [
-            PerFramePrediction(score=pred.score, label=pred.label, pts=pred_pts)
-            for pred, pred_pts in zip(predictions, pts)
+            [
+                PerFramePrediction(score=pred.score, label=pred.label, pts=pred_pts)
+                for pred in preds
+            ]
+            for preds, pred_pts in zip(predictions, pts)
         ]
-        return predictions_with_pts
+        predictions_with_pts_flat = concat(predictions_with_pts)
+        return predictions_with_pts_flat
 
     classified_chunks = list(map(classify_chunk, chunks))
     classified_frames = list(concat(classified_chunks))
