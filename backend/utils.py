@@ -1,5 +1,6 @@
 import functools
 import time
+from pathlib import Path
 from typing import Any, Callable
 
 
@@ -13,3 +14,7 @@ def time_exec(f) -> Callable[..., tuple[Any, float]]:
         return end - start, res
 
     return wrapper
+
+
+def get_project_root() -> Path:
+    return Path(__file__).parent.parent
