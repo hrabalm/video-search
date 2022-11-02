@@ -86,8 +86,8 @@ def classify_chunks(chunks, classifier: AbstractClassifier):
     return classified_frames
 
 
-def index_video_file(filename: str | typing.BinaryIO, classifier: AbstractClassifier):
-    _ = tag_video_file(filename, classifier)
+def index_video(filename: str | typing.BinaryIO, classifier: AbstractClassifier):
+    _ = tag_video(filename, classifier)
     raise NotImplementedError
 
 
@@ -116,16 +116,6 @@ def tag_video(
     classified_frames = classify_chunks(frame_chunks, classifier)
     grouped_predictions = group_predictions(classified_frames)
     return grouped_predictions
-
-
-def tag_video_file(
-    filename,
-    classifier: AbstractClassifier,
-    chunk_size: int = 1000,
-    keyframes_only=False,
-):
-    with open(filename, "rb") as f:
-        return tag_video(f, classifier, chunk_size, keyframes_only)
 
 
 def select_tags(predictions: list[PerFramePrediction], min_score):
