@@ -18,3 +18,17 @@ def time_exec(f) -> Callable[..., tuple[Any, float]]:
 
 def get_project_root() -> Path:
     return Path(__file__).parent.parent
+
+
+def annote_image(image, text: str):
+    import PIL.Image
+    import PIL.ImageDraw
+    import PIL.ImageFont
+
+    try:
+        font = PIL.ImageFont.truetype("DejaVuSans.ttf", 32)
+    except OSError:
+        font = PIL.ImageFont.load_default()
+    draw = PIL.ImageDraw.Draw(image)
+    draw.text((10, 10), text, font=font, fill=(225, 0, 0))
+    return image

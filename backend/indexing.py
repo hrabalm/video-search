@@ -118,19 +118,5 @@ def group_tags(predictions: list[PerFramePrediction]) -> dict[str, PerFramePredi
     return dict(predictions_by_label)
 
 
-def annote_image(image, text: str):
-    import PIL.Image
-    import PIL.ImageDraw
-    import PIL.ImageFont
-
-    try:
-        font = PIL.ImageFont.truetype("DejaVuSans.ttf", 32)
-    except OSError:
-        font = PIL.ImageFont.load_default()
-    draw = PIL.ImageDraw.Draw(image)
-    draw.text((10, 10), text, font=font, fill=(225, 0, 0))
-    return image
-
-
 if __name__ == "__main__":
     pass
