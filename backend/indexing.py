@@ -6,17 +6,10 @@ import av
 import PIL.Image
 from more_itertools import ichunked
 from pydantic import BaseModel
-from simple_file_checksum import get_checksum
 from toolz import concat, count
 
 from classifiers import AbstractClassifier
 from classifiers.prediction import GroupedPerFramePrediction, PerFramePrediction
-
-
-class FileHash(BaseModel):
-    filename: str
-    hash_function: str
-    checksum: str
 
 
 class DecodedFrame(BaseModel):
@@ -25,15 +18,6 @@ class DecodedFrame(BaseModel):
 
     class Config:
         arbitrary_types_allowed = True
-
-
-def file_hash(filename, hash_function="SHA256") -> FileHash:
-    checksum = get_checksum(filename, hash_function)
-    return FileHash(
-        filename=filename,
-        hash_function=hash_function,
-        checksum=checksum,
-    )
 
 
 def read_frames(file: str | typing.BinaryIO, keyframes_only=False):
