@@ -32,3 +32,5 @@ panoptic_seg = numpy.array(panoptic_seg, dtype=numpy.uint8)
 panoptic_seg_id = rgb_to_id(panoptic_seg)
 
 print(panoptic_seg_id)
+
+print(panoptic_seg)
