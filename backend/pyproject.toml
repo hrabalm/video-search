@@ -25,6 +25,7 @@ dependencies = [
     "simple-file-checksum>=1.2.2",
     "attrs>=22.1.0",
     "timm>=0.6.11",
+    "datasets>=2.6.1",
 ]
 requires-python = ">=3.10,<3.11"
 license = {text = "MIT"}
