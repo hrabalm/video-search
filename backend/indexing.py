@@ -1,5 +1,6 @@
 import typing
 from collections import defaultdict
+from itertools import starmap
 from typing import Collection, Iterable
 
 import av
@@ -9,7 +10,11 @@ from pydantic import BaseModel
 from toolz import concat, count
 
 from classifiers import AbstractClassifier
-from classifiers.prediction import GroupedPerFramePrediction, PerFramePrediction
+from classifiers.prediction import (
+    GroupedPerFramePrediction,
+    PerFramePrediction,
+    VideoTag,
+)
 
 
 class DecodedFrame(BaseModel):
@@ -70,11 +75,6 @@ def classify_chunks(chunks, classifier: AbstractClassifier):
     return classified_frames
 
 
-def index_video(filename: str | typing.BinaryIO, classifier: AbstractClassifier):
-    _ = tag_video(filename, classifier)
-    raise NotImplementedError
-
-
 def group_predictions(
     predictions: Collection[PerFramePrediction],
 ) -> Collection[GroupedPerFramePrediction]:
@@ -89,6 +89,44 @@ def group_predictions(
     ]
 
 
+def best_frames_for_groups(video_file, groups: Collection[GroupedPerFramePrediction]):
+    """Goes through a collection of groups and for each finds the frame that
+    was classified with the greatest confidence."""
+
+    def get_frame_index(group: GroupedPerFramePrediction):
+        best_pred = max(group.predictions, key=lambda pred: pred.score)
+        if best_pred.pts is not None:
+            return best_pred.pts
+        else:
+            raise ValueError(f"Missing pts for {best_pred}")
+
+    frame_pts = set(sorted(list(map(get_frame_index, groups))))
+    print(frame_pts)
+    frames = []
+    for frame in read_frames(video_file):
+        if frame.pts in frame_pts:
+            frames.append(frame.to_image())
+    return list(zip(groups, frames))
+
+
+def create_video_tags(
+    file, model: str, grouped_predictions: Collection[GroupedPerFramePrediction]
+) -> Collection[VideoTag]:
+    grouped_predictions_with_best_frames = best_frames_for_groups(
+        file, grouped_predictions
+    )
+    tags = starmap(
+        lambda group, image: VideoTag(
+            model=model,
+            tag=group.label,
+            images=[image],
+        ),
+        grouped_predictions_with_best_frames,
+    )
+
+    return list(tags)
+
+
 def tag_video(
     file: str | typing.BinaryIO,
     classifier: AbstractClassifier,
@@ -99,7 +137,8 @@ def tag_video(
     frame_chunks = ichunked(frames, chunk_size)
     classified_frames = classify_chunks(frame_chunks, classifier)
     grouped_predictions = group_predictions(classified_frames)
-    return grouped_predictions
+    video_tags = create_video_tags(file, str(classifier), grouped_predictions)
+    return video_tags
 
 
 def select_tags(predictions: list[PerFramePrediction], min_score):
