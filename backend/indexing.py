@@ -1,7 +1,6 @@
 import typing
 from collections import defaultdict
-from itertools import starmap
-from typing import Collection, Iterable
+from typing import Collection, Iterable, Iterator
 
 import av
 import PIL.Image
@@ -14,6 +13,7 @@ from classifiers.prediction import (
     GroupedPerFramePrediction,
     PerFramePrediction,
     VideoTag,
+    WrappedImage,
 )
 
 
@@ -89,9 +89,14 @@ def group_predictions(
     ]
 
 
-def best_frames_for_groups(video_file, groups: Collection[GroupedPerFramePrediction]):
+def add_best_frames_for_grouped_predictions(
+    video_file, groups: Collection[GroupedPerFramePrediction]
+) -> Iterator[tuple[GroupedPerFramePrediction, PIL.Image.Image]]:
     """Goes through a collection of groups and for each finds the frame that
-    was classified with the greatest confidence."""
+    was classified with the greatest confidence.
+
+    GroupedPredictions are yielded lazily so that all images don't have to be
+    loaded to the memory at the same time."""
 
     def get_frame_index(group: GroupedPerFramePrediction):
         best_pred = max(group.predictions, key=lambda pred: pred.score)
@@ -100,31 +105,26 @@ def best_frames_for_groups(video_file, groups: Collection[GroupedPerFramePredict
         else:
             raise ValueError(f"Missing pts for {best_pred}")
 
-    frame_pts = set(sorted(list(map(get_frame_index, groups))))
-    print(frame_pts)
-    frames = []
+    frame_pts = sorted(list(map(get_frame_index, groups)))
+    groups_by_pts = {get_frame_index(g): g for g in groups}
+
     for frame in read_frames(video_file):
         if frame.pts in frame_pts:
-            frames.append(frame.to_image())
-    return list(zip(groups, frames))
+            yield groups_by_pts[frame.pts], frame.to_image()
 
 
 def create_video_tags(
     file, model: str, grouped_predictions: Collection[GroupedPerFramePrediction]
-) -> Collection[VideoTag]:
-    grouped_predictions_with_best_frames = best_frames_for_groups(
+) -> Iterator[VideoTag]:
+    grouped_predictions_with_best_frames = add_best_frames_for_grouped_predictions(
         file, grouped_predictions
     )
-    tags = starmap(
-        lambda group, image: VideoTag(
+    for group, image in grouped_predictions_with_best_frames:
+        yield VideoTag(
             model=model,
             tag=group.label,
-            images=[image],
-        ),
-        grouped_predictions_with_best_frames,
-    )
-
-    return list(tags)
+            images=[WrappedImage(image=image)],
+        )
 
 
 def tag_video(
