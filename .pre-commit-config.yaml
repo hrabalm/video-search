@@ -7,7 +7,7 @@ repos:
           - id: check-yaml
           - id: check-added-large-files
     - repo: https://github.com/psf/black
-      rev: 22.8.0
+      rev: 22.10.0
       hooks:
           - id: black
     - repo: https://github.com/PyCQA/isort
@@ -20,12 +20,12 @@ repos:
       hooks:
           - id: flake8
     - repo: https://github.com/pre-commit/mirrors-eslint
-      rev: v8.24.0
+      rev: v8.27.0
       hooks:
           - id: eslint
     # export python requirements
     - repo: https://github.com/pdm-project/pdm
-      rev: 2.1.4
+      rev: 2.2.1
       hooks:
         - id: pdm-export
           # command arguments, e.g.:
