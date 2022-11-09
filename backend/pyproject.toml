@@ -26,6 +26,7 @@ dependencies = [
     "attrs>=22.1.0",
     "timm>=0.6.11",
     "datasets>=2.6.1",
+    "sortedcontainers>=2.4.0",
 ]
 requires-python = ">=3.10,<3.11"
 license = {text = "MIT"}
