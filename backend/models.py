@@ -11,8 +11,8 @@ class Files:
 
 class Tags:
     @staticmethod
-    def get_all():  # FIXME
-        tags = list(db_videos.distinct("tags"))
+    def get_all():
+        tags = list(db_videos.distinct("tags.tag"))
         return {"tags": tags}
 
 
