@@ -9,6 +9,13 @@ class Files:
     pass
 
 
+class Tags:
+    @staticmethod
+    def get_all():  # FIXME
+        tags = list(db_videos.distinct("tags"))
+        return {"tags": tags}
+
+
 class Videos:
     @staticmethod
     def _put_images(video):
