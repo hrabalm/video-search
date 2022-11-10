@@ -1,5 +1,7 @@
+import gridfs
 import pymongo
 
+from classifiers.prediction import codec_options
 from settings import settings
 
 _mongo_client = pymongo.MongoClient(
@@ -9,3 +11,5 @@ _mongo_client = pymongo.MongoClient(
     password=settings.mongo_password,
 )
 db = _mongo_client[settings.mongo_db]
+db_videos = db.get_collection("videos", codec_options=codec_options)
+fs = gridfs.GridFS(db)
