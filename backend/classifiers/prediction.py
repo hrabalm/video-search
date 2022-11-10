@@ -1,8 +1,9 @@
 import base64
 import io
-from typing import Optional
+from typing import Any, Optional
 
 import PIL.Image
+from bson.codec_options import CodecOptions, TypeCodec, TypeRegistry
 from pydantic import BaseModel, validator
 
 
@@ -70,7 +71,46 @@ class WrappedImage(BaseModel):
         json_encoders = {PIL.Image.Image: _save_image_to_png_str}
 
 
+class SourceFrame(BaseModel):
+    pts: int
+
+
 class VideoTag(BaseModel):
     model: str
     tag: str
     images: list[WrappedImage]
+    frame_pts: list[int] = []
+
+    @validator("images", pre=True)
+    def parse_images(cls, value):
+        if isinstance(value, list):
+            if len(value) > 0 and isinstance(value[0], WrappedImage):
+                return value
+            else:
+                return [WrappedImage(**params) for params in value]
+        return value
+
+    class Config:
+        arbitrary_types_allowed = True
+        json_encoders = {PIL.Image.Image: _save_image_to_png_str}
+
+
+class Video(BaseModel):
+    filenames: list[str]
+    filehash: str
+    tags: list[VideoTag]
+
+
+class ImageCodec(TypeCodec):
+    python_type = PIL.Image.Image
+    bson_type = bytes
+
+    def transform_python(self, value: Any) -> Any:
+        return _save_image_to_png_bytes(value)
+
+    def transform_bson(self, value: Any) -> Any:
+        return _load_image_from_png_bytes(value)
+
+
+type_registry = TypeRegistry([ImageCodec()])
+codec_options = CodecOptions(type_registry=type_registry)
