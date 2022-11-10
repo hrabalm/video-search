@@ -26,17 +26,3 @@ class Videos:
         videos = db.videos.find()
         other = to_json(videos)
         return {"vidoes": str(db.videos.find()), "other": other}
-
-
-Videos.add(
-    {
-        "name": "Nemesis",
-        "tags": [
-            "cat",
-            "dog",
-            {"tag": "cat", "type": "nn"},
-            {"tag": "dog", "type": "nn"},
-            {"tag": "cat", "type": "nn"},
-        ],
-    }
-)
