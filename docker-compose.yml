@@ -46,7 +46,7 @@ services:
     ports:
       - "80:3000"
     volumes:
-      - "./client:/app"
+      - "./client/src:/app/src"
 volumes:
   backendvenv:
   kerasmodels:
