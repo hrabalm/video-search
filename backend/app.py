@@ -1,3 +1,5 @@
+import subprocess
+
 import click
 
 
@@ -9,9 +11,18 @@ def cli():
 @cli.command()
 def api():
     click.echo("Launching API development server...")
-    from api import app
+    # from api import app
 
-    app.app.run(debug=True)
+    # app.app.run(debug=True)
+    subprocess.run(
+        [
+            "flask",
+            "--app",
+            "api.app",
+            "--debug",
+            "run",
+        ]
+    )
 
 
 @cli.command()

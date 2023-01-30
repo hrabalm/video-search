@@ -13,7 +13,6 @@ from classifiers.prediction import (
     GroupedPerFramePrediction,
     PerFramePrediction,
     VideoTag,
-    WrappedImage,
 )
 
 
@@ -116,14 +115,13 @@ def add_best_frames_for_grouped_predictions(
 def create_video_tags(
     file, model: str, grouped_predictions: Collection[GroupedPerFramePrediction]
 ) -> Iterator[VideoTag]:
-    grouped_predictions_with_best_frames = add_best_frames_for_grouped_predictions(
-        file, grouped_predictions
-    )
-    for group, image in grouped_predictions_with_best_frames:
+    for group in grouped_predictions:
+        frame_pts = group.best().pts
         yield VideoTag(
             model=model,
             tag=group.label,
-            images=[WrappedImage(image=image)],
+            frame_pts=([frame_pts] if frame_pts else []),
+            conf=group.best_score(),
         )
 
 

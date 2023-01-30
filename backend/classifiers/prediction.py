@@ -71,28 +71,20 @@ class WrappedImage(BaseModel):
         json_encoders = {PIL.Image.Image: _save_image_to_png_str}
 
 
-class SourceFrame(BaseModel):
+class SourceFrameReference(BaseModel):
+    video_filename: str
+    video_hash: str
     pts: int
 
 
 class VideoTag(BaseModel):
     model: str
     tag: str
-    images: list[WrappedImage]
     frame_pts: list[int] = []
-
-    @validator("images", pre=True)
-    def parse_images(cls, value):
-        if isinstance(value, list):
-            if len(value) > 0 and isinstance(value[0], WrappedImage):
-                return value
-            else:
-                return [WrappedImage(**params) for params in value]
-        return value
+    conf: float
 
     class Config:
         arbitrary_types_allowed = True
-        json_encoders = {PIL.Image.Image: _save_image_to_png_str}
 
 
 class Video(BaseModel):
@@ -102,8 +94,8 @@ class Video(BaseModel):
 
 
 class ImageCodec(TypeCodec):
-    python_type = PIL.Image.Image
-    bson_type = bytes
+    python_type = PIL.Image.Image  # type: ignore
+    bson_type = bytes  # type: ignore
 
     def transform_python(self, value: Any) -> Any:
         return _save_image_to_png_bytes(value)

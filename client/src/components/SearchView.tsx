@@ -9,7 +9,7 @@ function AvailableTags() {
 
     useEffect(() => {
         const fetchData = async () => {
-            const result = await axios('api/v1/get-tags');
+            const result = await axios('api/v2/tags');
 
             console.log(result);
             console.log(result.data);
@@ -33,11 +33,11 @@ function AvailableTags() {
 }
 
 function MockSearchResults() {
-    const [data, setData] = useState({ tags: [] });
+    const [data, setData] = useState({ videos: [] });
 
     useEffect(() => {
         const fetchData = async () => {
-            const result = await axios.post('api/v1/search-by-tags', {requested_tags: ['cat']});
+            const result = await axios.post('api/v2/videos-by-tags', {tags: ['web_site']});
 
             console.log(result);
             console.log(result.data);
@@ -49,14 +49,14 @@ function MockSearchResults() {
     return (
         <Box>
             <div>Requested tags:</div>
-            <div>{JSON.stringify(data)}</div>
-            {/* <ul>
-                {data.tags.map(item => (
-                    <li key={item}>
-                        {item}
+            <ul>
+                {data.videos.map(item => (
+                    <li key={JSON.stringify(item)}>
+                        {JSON.stringify(item)}
                     </li>
                 ))}
-            </ul> */}
+            </ul>
+            <p>{data.videos.length}</p>
         </Box>
     );
 }

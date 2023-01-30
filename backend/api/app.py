@@ -1,31 +1,51 @@
-from flask import Flask, request
+import json
 
-from api.models import Tags, Videos
+from bson import json_util
+from flask import Flask
+from flask_restx import Api, Resource, fields
+
+from models import Tags, Videos
 
 app = Flask(__name__)
+api = Api(app)
 
 
-@app.get("/api/v1/get-tags")
-def get_tags():
-    return Tags.get_all()
+def jsonify(x):
+    return json.loads(json_util.dumps(x))
 
 
-@app.post("/api/v1/search-by-tags")
-def search_by_tags():
-    data = request.json
-
-    requested_tags = data["requested_tags"]
-    return {"message": "Success", "data": data, "requested_tags": requested_tags}
+@api.route("/api/v2/tags")
+class TagsEndpoint(Resource):
+    def get(self):
+        return {"tags": Tags.get_all()}
 
 
-@app.post("/api/v1/videos")
-def add_video():
-    video = request.json
-    Videos.add(video)
-
-    return {"message": "Success"}
+@api.route("/api/v2/videos")
+class VideosEndpoint(Resource):
+    def get(self):
+        return {"videos": jsonify(Videos.get_all())}
 
 
-@app.get("/api/v1/videos")
-def get_all_videos():
-    return Videos.get_all()
+videos_by_tags_post_req = api.model(
+    "QueryVideosByTagRequest",
+    {
+        "tags": fields.List(fields.String),
+    },
+)
+
+
+@api.route("/api/v2/videos-by-tags")
+class VideosByTagEndpoint(Resource):
+    def get(self, tags):
+        return {"videos": jsonify(Videos.get_by_tags(tags, 0.5))}
+
+    @api.expect(videos_by_tags_post_req)
+    def post(self):
+        if api.payload and "tags" in api.payload:
+            tags = api.payload["tags"]
+            videos_found = jsonify(Videos.get_by_tags(tags, 0.0))
+            return {
+                "videos": videos_found,
+            }
+        else:
+            return {}

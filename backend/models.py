@@ -13,7 +13,7 @@ class Tags:
     @staticmethod
     def get_all():
         tags = list(db_videos.distinct("tags.tag"))
-        return {"tags": tags}
+        return tags
 
 
 class Videos:
@@ -32,4 +32,22 @@ class Videos:
 
     @staticmethod
     def get_all():
-        return db_videos.find()
+        return list(db_videos.find())
+
+    @staticmethod
+    def get_by_tags(tags: list[str], min_conf: float):
+        return db_videos.find(
+            {
+                "$and": [
+                    {
+                        "tags": {
+                            "$elemMatch": {
+                                "conf": {"$gt": min_conf},
+                                "tag": tag,
+                            }
+                        }
+                    }
+                    for tag in tags
+                ]
+            }
+        )

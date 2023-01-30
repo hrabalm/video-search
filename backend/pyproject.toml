@@ -27,6 +27,7 @@ dependencies = [
     "timm>=0.6.11",
     "datasets>=2.6.1",
     "sortedcontainers>=2.4.0",
+    "flask-restx>=1.0.3",
 ]
 requires-python = ">=3.10,<3.11"
 license = {text = "MIT"}
