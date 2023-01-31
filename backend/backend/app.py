@@ -1,6 +1,7 @@
 import subprocess
 
 import click
+import time
 
 
 @click.group()
@@ -13,15 +14,19 @@ def api():
     click.echo("Launching API development server...")
 
     while True:
-        subprocess.run(
-            [
+        try:
+            subprocess.run(
+                [
                 "flask",
                 "--app",
                 "backend.api.app",
                 "--debug",
                 "run",
-            ]
-        )
+                ]
+            )
+        except Exception as e:
+            print(e)
+            time.sleep(10)
 
 
 @cli.command()
