@@ -1,7 +1,7 @@
 import subprocess
+import time
 
 import click
-import time
 
 
 @click.group()
@@ -17,11 +17,11 @@ def api():
         try:
             subprocess.run(
                 [
-                "flask",
-                "--app",
-                "backend.api.app",
-                "--debug",
-                "run",
+                    "flask",
+                    "--app",
+                    "backend.api.app",
+                    "--debug",
+                    "run",
                 ]
             )
         except Exception as e:
