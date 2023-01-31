@@ -49,7 +49,7 @@ export default function Root() {
                         <DrawerListLink text="Status" absolute="/status/" />
                         <DrawerListLink text="Settings" absolute="/settings/" />
                         <Divider />
-                        <DrawerListLink text="DevTools" absolute="/devtools" />
+                        <DrawerListLink text="DevTools" absolute="/devtools/" />
                     </List>
                     <Divider />
                 </Drawer>
