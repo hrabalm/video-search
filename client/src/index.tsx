@@ -1,15 +1,45 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { BrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import Root from "./routes/root";
+import DevTools from './routes/devtools';
+import SearchByTag from './routes/search-by-tags';
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Root />,
+    children: [
+      {
+        path: "search-by-tag/",
+        index: true,
+        element: <SearchByTag />
+      },
+      {
+        path: "search-by-image/",
+        element: <h1>TODO: Search by image</h1>
+      },
+      {
+        path: "status/",
+        element: <h1>TODO: Status (how is the indexing going?)</h1>
+      },
+      {
+        path: "settings/",
+        element: <h1>TODO: Settings</h1>
+      },
+      {
+        path: "devtools/",
+        element: <DevTools />
+      },
+    ],
+  },
+]);
 
 ReactDOM.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+      <RouterProvider router={router} />
   </React.StrictMode>,
   document.getElementById('root')
 );
