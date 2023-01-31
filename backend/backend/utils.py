@@ -17,7 +17,7 @@ def time_exec(f) -> Callable[..., tuple[Any, float]]:
 
 
 def get_project_root() -> Path:
-    return Path(__file__).parent.parent
+    return Path(__file__).parent.parent.parent
 
 
 def annote_image(image, text: str):
