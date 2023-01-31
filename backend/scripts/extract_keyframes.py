@@ -1,6 +1,5 @@
 import av
 import click
-
 from indexing import read_frames
 
 

@@ -1,8 +1,8 @@
 import gridfs
 import pymongo
 
-from classifiers.prediction import codec_options
-from settings import settings
+from backend.classifiers.prediction import codec_options
+from backend.settings import settings
 
 _mongo_client = pymongo.MongoClient(
     host=settings.mongo_host,

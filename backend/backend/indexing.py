@@ -8,8 +8,8 @@ from more_itertools import ichunked
 from pydantic import BaseModel
 from toolz import concat, count
 
-from classifiers import AbstractClassifier
-from classifiers.prediction import (
+from backend.classifiers import AbstractClassifier
+from backend.classifiers.prediction import (
     GroupedPerFramePrediction,
     PerFramePrediction,
     VideoTag,

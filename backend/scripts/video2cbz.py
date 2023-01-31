@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
-import click
-
 import cbz
+import click
 from indexing import read_frames
 from utils import time_exec
 

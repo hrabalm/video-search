@@ -1,7 +1,6 @@
 import time
 
 import click
-
 from classifiers.efficientnet import EfficientNetClassifier, EfficientNetClassifierLarge
 from classifiers.vit import VitClassifier, VitClassifierLarge
 from indexing import count_keyframes, tag_video_file

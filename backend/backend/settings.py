@@ -2,7 +2,7 @@ from typing import Optional
 
 from pydantic import BaseSettings
 
-from utils import get_project_root
+from backend.utils import get_project_root
 
 
 class Settings(BaseSettings):

@@ -1,6 +1,6 @@
 import argparse
 
-import indexer
+import backend.video_indexer.indexer
 
 HOST = "localhost"
 
@@ -12,4 +12,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     with open(args.filename, "rb") as file:
-        indexer.process_video(file)
+        backend.video_indexer.indexer.process_video(file)

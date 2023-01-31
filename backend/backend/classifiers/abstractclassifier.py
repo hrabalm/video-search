@@ -1,6 +1,6 @@
 import abc
 
-import classifiers.prediction
+from backend.classifiers.prediction import PerFramePrediction
 
 
 class AbstractClassifier(abc.ABC):
@@ -8,13 +8,11 @@ class AbstractClassifier(abc.ABC):
     def __init__(self):
         pass
 
-    def classify(self, image) -> list[classifiers.prediction.PerFramePrediction]:
+    def classify(self, image) -> list[PerFramePrediction]:
         return self.classify_batch([image])[0]
 
     @abc.abstractmethod
-    def classify_batch(
-        self, batch
-    ) -> list[list[classifiers.prediction.PerFramePrediction]]:
+    def classify_batch(self, batch) -> list[list[PerFramePrediction]]:
         raise NotImplementedError
 
     @property

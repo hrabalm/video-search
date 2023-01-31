@@ -3,8 +3,8 @@ from typing import Collection
 
 import transformers
 
-from classifiers.abstractclassifier import AbstractClassifier
-from classifiers.prediction import PerFramePrediction
+from backend.classifiers.abstractclassifier import AbstractClassifier
+from backend.classifiers.prediction import PerFramePrediction
 
 
 class VitClassifier(AbstractClassifier):

@@ -5,8 +5,8 @@ import numpy as np
 import tensorflow as tf
 from toolz import compose_left
 
-from classifiers.abstractclassifier import AbstractClassifier
-from classifiers.prediction import PerFramePrediction
+from backend.classifiers.abstractclassifier import AbstractClassifier
+from backend.classifiers.prediction import PerFramePrediction
 
 # If there is a GPU available, enable memory_growth
 physical_devices = tf.config.list_physical_devices("GPU")

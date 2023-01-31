@@ -4,7 +4,7 @@ from bson import json_util
 from flask import Flask
 from flask_restx import Api, Resource, fields
 
-from models import Tags, Videos
+from backend.models import Tags, Videos
 
 app = Flask(__name__)
 api = Api(app)
