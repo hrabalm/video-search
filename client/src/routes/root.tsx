@@ -60,7 +60,9 @@ export default function Root() {
                         overflow: 'auto',
                     }}
                 >
-                    <Outlet />
+                    <Container maxWidth="lg">
+                        <Outlet />
+                    </Container>
                 </Box>
             </Box>
         </ThemeProvider >

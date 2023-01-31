@@ -1,5 +1,7 @@
+import Title from '../components/Title';
+
 export default function Development() {
     return (
-          <h1>Development tools</h1>
+          <Title title="Development Tools" />
     );
 }

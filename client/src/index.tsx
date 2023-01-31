@@ -5,7 +5,10 @@ import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Root from "./routes/root";
 import DevTools from './routes/devtools';
-import SearchByTag from './routes/search-by-tags';
+import SearchByTag from './routes/search-by-tag';
+import SearchByImage from './routes/search-by-image';
+import Status from './routes/status';
+import Settings from './routes/settings';
 
 const router = createBrowserRouter([
   {
@@ -13,21 +16,21 @@ const router = createBrowserRouter([
     element: <Root />,
     children: [
       {
-        path: "search-by-tag/",
+        path: "search-by-tag?/",
         index: true,
         element: <SearchByTag />
       },
       {
         path: "search-by-image/",
-        element: <h1>TODO: Search by image</h1>
+        element: <SearchByImage />
       },
       {
         path: "status/",
-        element: <h1>TODO: Status (how is the indexing going?)</h1>
+        element: <Status />
       },
       {
         path: "settings/",
-        element: <h1>TODO: Settings</h1>
+        element: <Settings />
       },
       {
         path: "devtools/",
