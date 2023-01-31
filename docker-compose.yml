@@ -24,10 +24,11 @@ services:
     ports:
       - "8080:5000"
     volumes:
-      - ./backend/:/app
+      - ./backend/backend:/app/backend
+      - ./backend/scripts:/app/scripts
+      - ./backend/tests:/app/tests
       - ./.test_data:/.test_data
       - kerasmodels:/root/.keras
-      - backendvenv:/app/.venv
     depends_on:
       mongo:
         condition: service_healthy
@@ -48,5 +49,4 @@ services:
     volumes:
       - "./client/src:/app/src"
 volumes:
-  backendvenv:
   kerasmodels:
