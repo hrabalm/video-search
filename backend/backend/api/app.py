@@ -55,3 +55,15 @@ class VideosByTagEndpoint(Resource):
             }
         else:
             return {}
+
+
+@api.route("/api/v2/reindex-all")
+class ReindexAllEndpoint(Resource):
+    def post(self):
+        import backend.indexing as indexing
+        import backend.settings
+
+        indexing.reindex_all(
+            backend.settings.settings
+        )  # FIXME: must not call this synchronously
+        return {"message": "success"}

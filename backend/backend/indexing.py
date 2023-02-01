@@ -198,13 +198,14 @@ def find_video_files(settings: backend.settings.Settings):
 def delete_index():
     from backend.api.db import db_videos
 
-    db_videos.drop()
+    db_videos.delete_many({})
 
 
 def reindex_all(settings: backend.settings.Settings):
-    # delete_index()
+    delete_index()
     files = find_video_files(settings)
 
+    # TODO: Process multiple files at once
     # with multiprocessing.Pool(1) as p:
     # p.map(process_file, files)
     list(map(process_file, files))
