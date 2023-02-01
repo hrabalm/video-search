@@ -9,6 +9,7 @@ import SearchByTag from './routes/search-by-tag';
 import SearchByImage from './routes/search-by-image';
 import Status from './routes/status';
 import Settings from './routes/settings';
+import VideoDetail, {loader as videoDetailLoader} from './routes/videos';
 
 const router = createBrowserRouter([
   {
@@ -18,23 +19,28 @@ const router = createBrowserRouter([
       {
         path: "search-by-tag?/",
         index: true,
-        element: <SearchByTag />
+        element: <SearchByTag />,
       },
       {
         path: "search-by-image/",
-        element: <SearchByImage />
+        element: <SearchByImage />,
       },
       {
         path: "status/",
-        element: <Status />
+        element: <Status />,
       },
       {
         path: "settings/",
-        element: <Settings />
+        element: <Settings />,
       },
       {
         path: "devtools/",
-        element: <DevTools />
+        element: <DevTools />,
+      },
+      {
+        path: "videos/:videoId",
+        element: <VideoDetail />,
+        loader: videoDetailLoader,
       },
     ],
   },

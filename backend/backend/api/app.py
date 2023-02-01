@@ -26,6 +26,12 @@ class VideosEndpoint(Resource):
         return {"videos": jsonify(Videos.get_all())}
 
 
+@api.route("/api/v2/videos/<id>")
+class VideoEndpoint(Resource):
+    def get(self, id):
+        return {"video": jsonify(Videos.get(id))}
+
+
 videos_by_tags_post_req = api.model(
     "QueryVideosByTagRequest",
     {

@@ -30,6 +30,13 @@ def api():
 
 
 @cli.command()
+def reindex():
+    from backend.indexing import reindex_all
+
+    reindex_all()
+
+
+@cli.command()
 def image_tagger():
     click.echo("Launching image tagger worker...")
     raise NotImplementedError  # FIXME

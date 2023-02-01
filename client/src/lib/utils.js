@@ -9,3 +9,8 @@ export async function fetchVideosFiltered(tags) {
     const response = await axios.post('/api/v2/videos-by-tags', {tags});
     return response.data;
 }
+
+export async function getVideo(videoId) {
+    const response = await axios(`/api/v2/videos/${videoId}`);
+    return response.data;
+}

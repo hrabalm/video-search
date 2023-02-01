@@ -1,3 +1,6 @@
+import pymongo
+from bson.objectid import ObjectId
+
 from backend.api.db import db_videos
 
 
@@ -31,23 +34,33 @@ class Videos:
         print("Inserted")
 
     @staticmethod
+    def get(id: str):
+        return db_videos.find_one({"_id": ObjectId(id)})
+
+    @staticmethod
     def get_all():
-        return list(db_videos.find())
+        return list(
+            db_videos.find().sort("filenames", pymongo.ASCENDING)
+        )  # FIXME: check
 
     @staticmethod
     def get_by_tags(tags: list[str], min_conf: float):
-        return db_videos.find(
-            {
-                "$and": [
+        if len(tags) > 0:
+            return list(
+                db_videos.find(
                     {
-                        "tags": {
-                            "$elemMatch": {
-                                "conf": {"$gt": min_conf},
-                                "tag": tag,
+                        "$and": [
+                            {
+                                "tags": {
+                                    "$elemMatch": {
+                                        "conf": {"$gt": min_conf},
+                                        "tag": tag,
+                                    }
+                                }
                             }
-                        }
+                            for tag in tags
+                        ]
                     }
-                    for tag in tags
-                ]
-            }
-        )
+                ).sort("filenames", pymongo.ASCENDING)
+            )  # FIXME: check
+        return Videos.get_all()

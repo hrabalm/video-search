@@ -1,5 +1,7 @@
+import pathlib
 import typing
 from collections import defaultdict
+from itertools import chain
 from typing import Collection, Iterable, Iterator
 
 import av
@@ -8,6 +10,7 @@ from more_itertools import ichunked
 from pydantic import BaseModel
 from toolz import concat, count
 
+import backend.settings
 from backend.classifiers import AbstractClassifier
 from backend.classifiers.prediction import (
     GroupedPerFramePrediction,
@@ -155,5 +158,59 @@ def group_tags(predictions: list[PerFramePrediction]) -> dict[str, PerFramePredi
     return dict(predictions_by_label)
 
 
+def process_file(file: pathlib.Path):
+    import logging
+
+    import backend.indexing
+    import backend.models
+    from backend.classifiers.efficientnet import EfficientNetClassifier
+    from backend.classifiers.prediction import Video
+
+    # taggers = []  # TODO
+
+    assert file.is_file()
+
+    logging.info(f"Processing {file}...")
+    tags = backend.indexing.tag_video(str(file), EfficientNetClassifier())
+
+    video = Video(filenames=[str(file.absolute())], filehash="TODO", tags=list(tags))
+    backend.models.Videos.insert_one(video.dict())
+    print(f"Inserting {video.dict()}")
+
+
+def is_video_file(file: pathlib.Path, extensions: set[str]):
+    return file.is_file() and str.lower(file.suffix) in extensions
+
+
+def find_video_files(settings: backend.settings.Settings):
+    extensions = settings.video_extensions
+    directories = [pathlib.Path(d) for d in settings.scanned_directories]
+    assert all(d.is_dir() for d in directories)
+
+    video_files = filter(
+        lambda f: is_video_file(f, extensions),
+        chain.from_iterable(d.glob("**/*") for d in directories),
+    )
+
+    return video_files
+
+
+def delete_index():
+    from backend.api.db import db_videos
+
+    db_videos.drop()
+
+
+def reindex_all(settings: backend.settings.Settings):
+    # delete_index()
+    files = find_video_files(settings)
+
+    # with multiprocessing.Pool(1) as p:
+    # p.map(process_file, files)
+    list(map(process_file, files))
+
+
 if __name__ == "__main__":
+    reindex_all(backend.settings.settings)
+    print("Done?")
     pass
