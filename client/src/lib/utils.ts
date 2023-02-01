@@ -5,12 +5,12 @@ export async function fetchAvailableTags() {
     return response.data;
 }
 
-export async function fetchVideosFiltered(tags) {
+export async function fetchVideosFiltered(tags: string[]) {
     const response = await axios.post('/api/v2/videos-by-tags', {tags});
     return response.data;
 }
 
-export async function getVideo(videoId) {
+export async function getVideo(videoId: string) {
     const response = await axios(`/api/v2/videos/${videoId}`);
     return response.data;
 }
