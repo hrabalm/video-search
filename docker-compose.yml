@@ -42,6 +42,24 @@ services:
       - SQL_USER
       - SQL_PASSWORD
       - SQL_DB
+  api_worker:
+    build: "./backend"
+    volumes:
+      - ./backend/backend:/app/backend
+      - ./backend/scripts:/app/scripts
+      - ./backend/tests:/app/tests
+      - ./.test_data:/.test_data
+      - kerasmodels:/root/.keras
+    # depends_on:
+      # api:
+        # condition: service_healthy
+    environment:
+      - SQL_HOST
+      - SQL_PORT
+      - SQL_USER
+      - SQL_PASSWORD
+      - SQL_DB
+    command: pdm run dramatiq backend.api.app:redis_broker backend.indexing
   web:
     build: "./client"
     ports:

@@ -5,6 +5,7 @@ from itertools import chain
 from typing import Collection, Iterable, Iterator
 
 import av
+import dramatiq
 import PIL.Image
 from more_itertools import ichunked
 from pydantic import BaseModel
@@ -182,9 +183,9 @@ def is_video_file(file: pathlib.Path, extensions: set[str]):
     return file.is_file() and str.lower(file.suffix) in extensions
 
 
-def find_video_files(settings: backend.settings.Settings):
-    extensions = settings.video_extensions
-    directories = [pathlib.Path(d) for d in settings.scanned_directories]
+def find_video_files(directories: list[str], extensions: list[str]):
+    extensions = set(extensions)
+    directories = [pathlib.Path(d) for d in directories]
     assert all(d.is_dir() for d in directories)
 
     video_files = filter(
@@ -201,9 +202,10 @@ def delete_index():
     db_videos.delete_many({})
 
 
-def reindex_all(settings: backend.settings.Settings):
+@dramatiq.actor
+def reindex_all(directories: list[str], extensions: list[str]):
     delete_index()
-    files = find_video_files(settings)
+    files = find_video_files(directories, extensions)
 
     # TODO: Process multiple files at once
     # with multiprocessing.Pool(1) as p:

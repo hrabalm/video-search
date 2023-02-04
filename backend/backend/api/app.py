@@ -1,6 +1,8 @@
 import json
 
+import dramatiq
 from bson import json_util
+from dramatiq.brokers.redis import RedisBroker
 from flask import Flask
 from flask_restx import Api, Resource, fields
 
@@ -8,6 +10,9 @@ from backend.models import Tags, Videos
 
 app = Flask(__name__)
 api = Api(app)
+
+redis_broker = RedisBroker(host="redis")
+dramatiq.set_broker(redis_broker)
 
 
 def jsonify(x):
@@ -63,7 +68,12 @@ class ReindexAllEndpoint(Resource):
         import backend.indexing as indexing
         import backend.settings
 
-        indexing.reindex_all(
-            backend.settings.settings
-        )  # FIXME: must not call this synchronously
+        # set is not JSON serializable, so we have to convert to list
+        directories = list(backend.settings.settings.scanned_directories)
+        extensions = list(backend.settings.settings.video_extensions)
+
+        indexing.reindex_all.send(
+            directories,
+            extensions,
+        )
         return {"message": "success"}
