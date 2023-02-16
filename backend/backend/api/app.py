@@ -3,7 +3,7 @@ import json
 import dramatiq
 from bson import json_util
 from dramatiq.brokers.redis import RedisBroker
-from flask import Flask
+from flask import Flask, request, send_file
 from flask_restx import Api, Resource, fields
 
 from backend.models import Tags, Videos
@@ -77,3 +77,23 @@ class ReindexAllEndpoint(Resource):
             extensions,
         )
         return {"message": "success"}
+
+
+@api.route("/api/v2/source-file/<id>")
+class SourceFileEndpoint(Resource):
+    def get(self, id):
+        video = Videos.get(id)  # noqa
+
+        file_path = ...
+        file_name = ...  # noqa
+
+        # Get the range of bytes requested by the client
+        range_header = request.headers.get("Range")
+        start, end = 0, None  # noqa
+
+        if range_header:
+            pass
+
+        return send_file(
+            file_path,
+        )
