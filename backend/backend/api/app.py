@@ -1,9 +1,11 @@
 import json
+import pathlib
 
 import dramatiq
+import werkzeug.exceptions
 from bson import json_util
 from dramatiq.brokers.redis import RedisBroker
-from flask import Flask, request, send_file
+from flask import Flask, send_file
 from flask_restx import Api, Resource, fields
 
 from backend.models import Tags, Videos
@@ -82,18 +84,30 @@ class ReindexAllEndpoint(Resource):
 @api.route("/api/v2/source-file/<id>")
 class SourceFileEndpoint(Resource):
     def get(self, id):
-        video = Videos.get(id)  # noqa
+        video = Videos.get(id)
 
-        file_path = ...
-        file_name = ...  # noqa
+        if not video:
+            raise werkzeug.exceptions.NotFound(f"Object with id '{id}' not found.")
 
-        # Get the range of bytes requested by the client
-        range_header = request.headers.get("Range")
-        start, end = 0, None  # noqa
+        file_path = pathlib.Path(video["filenames"][0])
+        file_name = file_path.name
+        file_extension = file_path.suffix
 
-        if range_header:
-            pass
+        # TODO: these definitions could be moves elsewhere (and potentially
+        # be joined with a list of supported multimedia formats)
+        MIMETYPES = {
+            ".mp4": "video/mp4",
+            ".mkv": "video/x-matroska",
+            ".flv": "video/x-flv",
+            ".webm": "video/webm",
+            ".avi": "video/x-msvideo",
+            ".wmv": "video/x-ms-wmv",
+        }
+        DEFAULT_VIDEO_MIMETYPE = "application/octet-stream"
+        file_mimetype = MIMETYPES.get(file_extension, DEFAULT_VIDEO_MIMETYPE)
 
         return send_file(
             file_path,
+            download_name=file_name,
+            mimetype=file_mimetype,
         )
