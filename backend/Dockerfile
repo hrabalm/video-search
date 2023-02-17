@@ -10,7 +10,7 @@ RUN pip install pdm
 
 COPY pyproject.toml pdm.lock /app/
 # RUN pdm install --prod --no-lock --no-editable
-RUN pdm install --dev --no-lock --no-editable
+RUN pdm install --dev --no-lock --no-editable && rm -rf ~/.cache
 
 COPY . .
 
