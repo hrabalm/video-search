@@ -1,8 +1,8 @@
-import Title from '../components/Title';
+import Title from "../components/Title";
 export default function Settings() {
-    return (
-          <>
-            <Title title="Settings" />
-          </>
-    );
+  return (
+    <>
+      <Title title="Settings" />
+    </>
+  );
 }

@@ -1,15 +1,15 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import reportWebVitals from './reportWebVitals';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import React from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
+import reportWebVitals from "./reportWebVitals";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Root from "./routes/root";
-import DevTools from './routes/devtools';
-import SearchByTag from './routes/search-by-tag';
-import SearchByImage from './routes/search-by-image';
-import Status from './routes/status';
-import Settings from './routes/settings';
-import VideoDetail, {loader as videoDetailLoader} from './routes/videos';
+import DevTools from "./routes/devtools";
+import SearchByTag from "./routes/search-by-tag";
+import SearchByImage from "./routes/search-by-image";
+import Status from "./routes/status";
+import Settings from "./routes/settings";
+import VideoDetail, { loader as videoDetailLoader } from "./routes/videos";
 
 const router = createBrowserRouter([
   {
@@ -48,9 +48,9 @@ const router = createBrowserRouter([
 
 ReactDOM.render(
   <React.StrictMode>
-      <RouterProvider router={router} />
+    <RouterProvider router={router} />
   </React.StrictMode>,
-  document.getElementById('root')
+  document.getElementById("root")
 );
 
 // If you want to start measuring performance in your app, pass a function

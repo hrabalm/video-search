@@ -1,10 +1,10 @@
-import VideoListWithFiltering from '../components/VideoListWithFiltering';
-import Title from '../components/Title';
+import VideoListWithFiltering from "../components/VideoListWithFiltering";
+import Title from "../components/Title";
 export default function SearchByTag() {
-    return (
-          <>
-            <Title title="Search by Tag" />
-            <VideoListWithFiltering />
-          </>
-    );
+  return (
+    <>
+      <Title title="Search by Tag" />
+      <VideoListWithFiltering />
+    </>
+  );
 }
