@@ -1,7 +1,7 @@
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
-import { Container, Divider, Drawer, IconButton, InputBase, List, ListItem, ListItemText, ListItemButton, Toolbar } from '@mui/material';
+import { Container, Divider, Drawer, List, ListItemText, ListItemButton, Toolbar } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import { Outlet, Link } from "react-router-dom";
 
