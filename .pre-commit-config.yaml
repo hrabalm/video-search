@@ -19,10 +19,6 @@ repos:
       rev: 6.0.0
       hooks:
           - id: flake8
-    - repo: https://github.com/pre-commit/mirrors-eslint
-      rev: v8.33.0
-      hooks:
-          - id: eslint
     # export python requirements
     - repo: https://github.com/pdm-project/pdm
       rev: 2.4.2
