@@ -77,7 +77,7 @@ export default function Root() {
             overflow: "auto",
           }}
         >
-          <Container maxWidth="lg">
+          <Container maxWidth="lg" sx={{ marginTop: 3, marginBot: 3 }}>
             <Outlet />
           </Container>
         </Box>
