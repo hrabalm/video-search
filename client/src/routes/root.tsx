@@ -1,31 +1,10 @@
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
-import {
-  Container,
-  Divider,
-  Drawer,
-  List,
-  ListItemText,
-  ListItemButton,
-  Toolbar,
-} from "@mui/material";
+import { Container, Divider, Drawer, List, Toolbar } from "@mui/material";
 import Typography from "@mui/material/Typography";
-import { Outlet, Link } from "react-router-dom";
-
-function DrawerListLink({
-  text,
-  absolute,
-}: {
-  text: string;
-  absolute: string;
-}) {
-  return (
-    <ListItemButton key={text} component={Link} to={absolute}>
-      <ListItemText primary={text} />
-    </ListItemButton>
-  );
-}
+import { Outlet } from "react-router-dom";
+import DrawerListLink from "../components/ListItemButton";
 
 export default function Root() {
   const darkTheme = createTheme({
