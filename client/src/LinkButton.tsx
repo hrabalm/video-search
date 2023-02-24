@@ -10,5 +10,5 @@ interface LinkButtonProps {
 export default function LinkButton(props: LinkButtonProps) {
   let navigate = useNavigate();
 
-  return <Button onClick={() => navigate(props.link)}>{props.text}</Button>;
+  return <Button variant="outlined" sx={{m: 0.5}} onClick={() => navigate(props.link)}>{props.text}</Button>;
 }

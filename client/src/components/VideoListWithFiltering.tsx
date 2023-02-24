@@ -63,13 +63,13 @@ function ResultsTable({ tags }: any) {
   return (
     <>
       <Paper>
-        <Button variant="outlined" onClick={handleClickFilter} sx={{ m: 1 }}>
+        <Button variant="outlined" onClick={handleClickFilter} sx={{ m: 0.5 }}>
           Edit Filters
         </Button>
-        <Button variant="outlined" onClick={handleDeleteFilter} sx={{ m: 1 }}>
+        <Button variant="outlined" onClick={handleDeleteFilter} sx={{ m: 0.5 }}>
           Delete Filters
         </Button>
-        <Button variant="outlined" onClick={handleRefresh} sx={{ m: 1 }}>
+        <Button variant="outlined" onClick={handleRefresh} sx={{ m: 0.5 }}>
           Refresh
         </Button>
         <Table>

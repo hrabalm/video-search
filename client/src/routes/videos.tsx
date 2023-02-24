@@ -1,8 +1,12 @@
 import Title from "../components/Title";
 import { Form, useLoaderData } from "react-router-dom";
 import { getVideo } from "../lib/utils";
-import { Chip, Grid, Paper, styled, Typography } from "@mui/material";
+import { Chip, Grid, Paper, styled, TextField, Typography, Button } from "@mui/material";
 import _ from "lodash";
+import LinkButton from "../LinkButton";
+import DownloadButton from "../components/DownloadButton";
+
+const TAG_MIN_CONF = 0.75;
 
 export async function loader({ params }: { params: any }) {
   const videoId = params.videoId;
@@ -23,10 +27,13 @@ export default function VideoDetail() {
 
   const CHIP_MARGIN = 0.3;
 
+  // FIXME: this should be absolute URL to be useful
+  const base = "http://localhost:8080"// TODO: remove
+  const url = base + `/api/v2/source-file/${video.video._id["$oid"]}`;
+
   return (
     <>
       <Title title="Video Detail" />
-      {/* {JSON.stringify(video, null, 4)} */}
       {
         // TODO: this should be sorted by tag type (which could also be Chip in
         // the left column, its tags would be in right)
@@ -37,6 +44,19 @@ export default function VideoDetail() {
         //   return <Chip label={ tag.tag } />
         // })
       }
+      <Grid container>
+        <Grid xs sx={{m: 1}}>
+          <TextField id="url-textfield" label="Video URL" defaultValue={url} variant="outlined" size="small" InputProps={{ readOnly: true }} fullWidth onFocus={event => {
+        event.target.select();
+      }} />
+        </Grid>
+        <Grid xs="auto" sx={{m: 1}}>
+          <Button variant="outlined" sx={{m: 0.5}} onClick={() => navigator.clipboard.writeText(url)}>Copy URL</Button>
+        </Grid>
+        <Grid xs="auto" sx={{m: 1}}>
+          <DownloadButton text="Download" link={url} />
+        </Grid>
+      </Grid>
       <Typography>Tags:</Typography>
       <Grid container spacing={2}>
         <Grid item xs={4}>
@@ -50,7 +70,7 @@ export default function VideoDetail() {
           <Item>
             {Object.entries(tags_by_tagger).map(([model, tags]) => {
               return tags
-                .filter((tag) => tag.conf >= 0.75)
+                .filter((tag) => tag.conf >= TAG_MIN_CONF)
                 .map((tag) => {
                   return <Chip label={tag.tag} sx={{ margin: CHIP_MARGIN }} />;
                 });
