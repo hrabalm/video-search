@@ -59,7 +59,12 @@ services:
       - SQL_USER
       - SQL_PASSWORD
       - SQL_DB
-    command: pdm run dramatiq backend.api.app:redis_broker backend.indexing
+    command: pdm run dramatiq -p 1 -t 1 backend.api.app:redis_broker backend.indexing
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 2G
   web:
     build: "./client"
     ports:
