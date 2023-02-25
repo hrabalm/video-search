@@ -10,15 +10,17 @@ from pydantic import BaseModel
 from toolz import concat, count
 
 import backend.tagging
+from backend.classifiers.catalog import classifiers_catalog
 from backend.classifiers.prediction import (
     GroupedPerFramePrediction,
     PerFramePrediction,
     VideoTag,
 )
 
-ENABLE_MODEL_CACHE = True
 # This enables process-wide model cache, because loading the model repeatedly
 # appears to leak memory.
+ENABLE_MODEL_CACHE = True
+TIMEOUT_MS = 10 * 60 * 1_000
 
 models_cache = {}
 
@@ -93,9 +95,10 @@ def resize_frame(frame, resolution) -> DecodedFrame:
 
 
 def classify_batch(images, classifier_name: str):
-    from backend.classifiers.catalog import classifier_makers
 
-    classifier = get_model(classifier_name, classifier_makers[classifier_name])
+    classifier = get_model(
+        classifier_name, classifiers_catalog[classifier_name].make_func
+    )
     predictions = classifier.classify_batch(images)
     return predictions
 
@@ -107,12 +110,9 @@ def classify_chunks(chunks, classifier_name: str):
         chunk = list(chunk)
         images = map(lambda f: f.image, chunk)
         pts = map(lambda f: f.pts, chunk)
-        # predictions = classify_batch(list(images), classifier_name)
         predictions = backend.tasks.ml.remote_classify_batch.send(
             list(images), classifier_name
-        ).get_result(
-            block=True, timeout=10 * 60 * 1_000
-        )  # FIXME: 60s
+        ).get_result(block=True, timeout=TIMEOUT_MS)
         predictions_with_pts = [
             [
                 PerFramePrediction(score=pred.score, label=pred.label, pts=pred_pts)
@@ -148,8 +148,7 @@ def tag_video(
     chunk_size: int = 1000,
     keyframes_only=False,
 ):
-    # required_resolution = classifier_name.required_resolution
-    required_resolution = (224, 224)
+    required_resolution = classifiers_catalog[classifier_name].input_resolution
     frames = read_frames_resized(file, required_resolution, keyframes_only)
     frame_chunks = ichunked(frames, chunk_size)
     classified_frames = classify_chunks(frame_chunks, classifier_name)

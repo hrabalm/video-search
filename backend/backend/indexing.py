@@ -59,7 +59,13 @@ def reindex_all(directories: list[str], extensions: list[str]):
     # TODO: Process multiple files at once
     # with multiprocessing.Pool(1) as p:
     # p.map(process_file, files)
+    import time
+
+    start = time.time_ns()
     list(map(process_file, files))
+    end = time.time_ns()
+    took = end - start
+    print(f"Indexing took {(took)/(10**9)}s.")
 
 
 # indexing
