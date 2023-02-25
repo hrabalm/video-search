@@ -110,7 +110,7 @@ def classify_chunks(chunks, classifier_name: str):
         chunk = list(chunk)
         images = map(lambda f: f.image, chunk)
         pts = map(lambda f: f.pts, chunk)
-        predictions = backend.tasks.ml.remote_classify_batch.send(
+        predictions = backend.tasks.ml.rpc_classify_batch.send(
             list(images), classifier_name
         ).get_result(block=True, timeout=TIMEOUT_MS)
         predictions_with_pts = [
