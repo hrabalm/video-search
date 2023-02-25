@@ -71,6 +71,7 @@ class EfficientNetClassifierLarge(AbstractClassifier):
             predictions, top=1
         )
         results = map(to_prediction, decoded_predictions)
+        tf.keras.backend.clear_session()
         return list(results)
 
     @property

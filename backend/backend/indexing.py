@@ -177,6 +177,8 @@ def process_file(file: pathlib.Path):
     video = Video(filenames=[str(file.absolute())], filehash="TODO", tags=list(tags))
     backend.models.Videos.insert_one(video.dict())
     print(f"Inserting {video.dict()}")
+    import tensorflow as tf
+    tf.keras.backend.clear_session()
 
 
 def is_video_file(file: pathlib.Path, extensions: set[str]):
