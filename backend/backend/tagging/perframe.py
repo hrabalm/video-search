@@ -4,6 +4,7 @@ import typing
 from typing import Collection, Iterable, Iterator
 
 import av
+import numpy as np
 import PIL.Image
 from more_itertools import ichunked
 from pydantic import BaseModel
@@ -102,9 +103,10 @@ def classify_chunks(chunks, classifier_name: str):
     def classify_chunk(chunk: Iterable[DecodedFrame]):
         chunk = list(chunk)
         images = map(lambda f: f.image, chunk)
+        images_np = np.stack(list(map(lambda img: np.asarray(img), images)))
         pts = map(lambda f: f.pts, chunk)
         predictions = backend.tasks.ml.rpc_classify_batch.send(
-            list(images), classifier_name
+            list(images_np), classifier_name
         ).get_result(block=True, timeout=TIMEOUT_MS)
         predictions_with_pts = [
             [
