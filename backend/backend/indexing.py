@@ -185,13 +185,13 @@ def is_video_file(file: pathlib.Path, extensions: set[str]):
 
 
 def find_video_files(directories: list[str], extensions: list[str]):
-    extensions = set(extensions)
-    directories = [pathlib.Path(d) for d in directories]
-    assert all(d.is_dir() for d in directories)
+    extensions_set = set(extensions)
+    directories_set = [pathlib.Path(d) for d in directories]
+    assert all(d.is_dir() for d in directories_set)
 
     video_files = filter(
-        lambda f: is_video_file(f, extensions),
-        chain.from_iterable(d.glob("**/*") for d in directories),
+        lambda f: is_video_file(f, extensions_set),
+        chain.from_iterable(d.glob("**/*") for d in directories_set),
     )
 
     return video_files
