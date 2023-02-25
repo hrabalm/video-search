@@ -16,7 +16,9 @@ from backend.classifiers.prediction import (
     VideoTag,
 )
 
-ENABLE_MODEL_CACHE = False
+ENABLE_MODEL_CACHE = True
+# This enables process-wide model cache, because loading the model repeatedly
+# appears to leak memory.
 
 models_cache = {}
 
