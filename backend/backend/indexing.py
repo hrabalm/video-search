@@ -3,6 +3,7 @@ import typing
 from collections import defaultdict
 from itertools import chain
 from typing import Collection, Iterable, Iterator
+import logging
 
 import av
 import PIL.Image
@@ -158,26 +159,22 @@ def group_tags(predictions: list[PerFramePrediction]) -> dict[str, PerFramePredi
 
 
 def process_file(file: pathlib.Path):
-    import logging
+    import backend.tagging
 
-    import backend.indexing
-    import backend.models
-    from backend.classifiers.efficientnet import EfficientNetClassifier
-    from backend.classifiers.prediction import Video
+    def load_efficientnet():
+        import backend.classifiers.efficientnet as efficientnet
+        return efficientnet.EfficientNetClassifier()
 
-    # taggers = []  # TODO
-
-    assert file.is_file()
-
-    logging.info(f"Processing {file}...")
-    tags = backend.indexing.tag_video(str(file), EfficientNetClassifier())
-
-    video = Video(filenames=[str(file.absolute())], filehash="TODO", tags=list(tags))
-    backend.models.Videos.insert_one(video.dict())
-    print(f"Inserting {video.dict()}")
-    import tensorflow as tf
-
-    tf.keras.backend.clear_session()
+    processors: list[backend.tagging.IVideoProcessor] = [
+        backend.tagging.VideoTaggerRunner(
+            taggers=[
+                # lambda: backend.tagging.TestTagger(),
+                lambda: backend.tagging.VideoPerFrameTagger("tf-efficientnet", load_efficientnet),
+            ]
+        )
+    ]
+    indexer = VideoIndexer(processors)
+    indexer.index_video(file)
 
 
 def is_video_file(file: pathlib.Path, extensions: set[str]):
@@ -211,3 +208,26 @@ def reindex_all(directories: list[str], extensions: list[str]):
     # with multiprocessing.Pool(1) as p:
     # p.map(process_file, files)
     list(map(process_file, files))
+
+
+# indexing
+import backend.models
+import backend.tagging
+from backend.classifiers.prediction import Video, VideoTag
+
+
+class VideoIndexer:
+    def __init__(self, video_processors: list[backend.tagging.IVideoProcessor]):
+        self.processors = video_processors
+
+    def index_video(self, path: pathlib.Path):
+        # TODO: only update old/missing if not exists
+        video = Video(filenames=[str(path)], filehash="NotImplemented", tags=[])
+        for processor in self.processors:
+            try:
+                # TODO: only necessary if missing/old (in which case I should)
+                # remove old data first
+                video = processor.process(video, path)
+            except Exception as e:
+                logging.error(str(e))  # FIXME: FORMAT
+        backend.models.Videos.insert_one(video.dict())
