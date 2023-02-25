@@ -78,5 +78,6 @@ class VideoIndexer:
                 # remove old data first
                 video = processor.process(video, path)
             except Exception as e:
-                logging.error(str(e))  # FIXME: FORMAT
+                # logging.error(str(e))  # FIXME: FORMAT
+                logging.exception(e)
         backend.models.Videos.insert_one(video.dict())

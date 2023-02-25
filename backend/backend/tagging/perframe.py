@@ -49,7 +49,8 @@ class VideoPerFrameTagger(backend.tagging.IVideoTagger):
     def tag(self, video_path: pathlib.Path) -> list[VideoTag]:
         assert video_path.is_file()
         self._ensure_initialized()
-        tags = tag_video(str(video_path), self._model)
+        # tags = tag_video(str(video_path), self._model)
+        tags = tag_video(str(video_path), "tf-efficientnet")
         return list(tags)
 
 
@@ -90,12 +91,21 @@ def resize_frame(frame, resolution) -> DecodedFrame:
     )
 
 
-def classify_chunks(chunks, classifier: AbstractClassifier):
+def classify_batch(images, classifier_name: str):
+    from backend.classifiers.catalog import classifier_makers
+    classifier = get_model(classifier_name, classifier_makers[classifier_name])
+    predictions = classifier.classify_batch(images)
+    return predictions
+
+import backend.tasks.ml
+
+def classify_chunks(chunks, classifier_name: str):
     def classify_chunk(chunk: Iterable[DecodedFrame]):
         chunk = list(chunk)
         images = map(lambda f: f.image, chunk)
         pts = map(lambda f: f.pts, chunk)
-        predictions = classifier.classify_batch(list(images))
+        # predictions = classify_batch(list(images), classifier_name)
+        predictions = backend.tasks.ml.remote_classify_batch.send(list(images), classifier_name).get_result(block=True, timeout=10*60*1_000)  # FIXME: 60s
         predictions_with_pts = [
             [
                 PerFramePrediction(score=pred.score, label=pred.label, pts=pred_pts)
@@ -127,15 +137,17 @@ def group_predictions(
 
 def tag_video(
     file: str | typing.BinaryIO,
-    classifier: AbstractClassifier,
+    classifier_name: str,
     chunk_size: int = 1000,
     keyframes_only=False,
 ):
-    frames = read_frames_resized(file, classifier.required_resolution, keyframes_only)
+    # required_resolution = classifier_name.required_resolution
+    required_resolution = (224, 224)
+    frames = read_frames_resized(file, required_resolution, keyframes_only)
     frame_chunks = ichunked(frames, chunk_size)
-    classified_frames = classify_chunks(frame_chunks, classifier)
+    classified_frames = classify_chunks(frame_chunks, classifier_name)
     grouped_predictions = group_predictions(classified_frames)
-    video_tags = create_video_tags(file, str(classifier), grouped_predictions)
+    video_tags = create_video_tags(file, str(classifier_name), grouped_predictions)
     return video_tags
 
 
