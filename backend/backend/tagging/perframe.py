@@ -40,20 +40,13 @@ class VideoPerFrameTagger(backend.tagging.IVideoTagger):
     """Passes video keyframes through a image classification model and returns
     the results as tags."""
 
-    def __init__(self, model_name: str, model_maker: typing.Callable):
+    def __init__(self, model_name: str):
+        assert model_name in classifiers_catalog
         self.model_name = model_name
-        self._model_maker = model_maker
-        self._model = None
-
-    def _ensure_initialized(self):
-        if not self._model:
-            self._model = get_model(self.model_name, self._model_maker)
 
     def tag(self, video_path: pathlib.Path) -> list[VideoTag]:
         assert video_path.is_file()
-        self._ensure_initialized()
-        # tags = tag_video(str(video_path), self._model)
-        tags = tag_video(str(video_path), "tf-efficientnet")
+        tags = tag_video(str(video_path), self.model_name)
         return list(tags)
 
 

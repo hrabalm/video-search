@@ -11,16 +11,11 @@ def process_file(file: pathlib.Path):
     import backend.tagging
     import backend.tagging.perframe
 
-    def load_efficientnet():
-        import backend.classifiers.efficientnet as efficientnet
-
-        return efficientnet.EfficientNetClassifier()
-
     processors: list[backend.tagging.IVideoProcessor] = [
         backend.tagging.VideoTaggerRunner(
             taggers=[
                 lambda: backend.tagging.perframe.VideoPerFrameTagger(
-                    "tf-efficientnet", load_efficientnet
+                    "tf-efficientnet",
                 ),
             ]
         )
