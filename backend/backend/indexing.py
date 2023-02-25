@@ -160,6 +160,7 @@ def group_tags(predictions: list[PerFramePrediction]) -> dict[str, PerFramePredi
 
 def process_file(file: pathlib.Path):
     import backend.tagging
+    import backend.tagging.perframe
 
     def load_efficientnet():
         import backend.classifiers.efficientnet as efficientnet
@@ -168,8 +169,7 @@ def process_file(file: pathlib.Path):
     processors: list[backend.tagging.IVideoProcessor] = [
         backend.tagging.VideoTaggerRunner(
             taggers=[
-                # lambda: backend.tagging.TestTagger(),
-                lambda: backend.tagging.VideoPerFrameTagger("tf-efficientnet", load_efficientnet),
+                lambda: backend.tagging.perframe.VideoPerFrameTagger("tf-efficientnet", load_efficientnet),
             ]
         )
     ]
