@@ -42,6 +42,7 @@ services:
       - SQL_USER
       - SQL_PASSWORD
       - SQL_DB
+      - REDIS_URL=redis://redis
   api_worker:
     build: "./backend"
     volumes:
@@ -59,7 +60,24 @@ services:
       - SQL_USER
       - SQL_PASSWORD
       - SQL_DB
-    command: pdm run dramatiq -p 1 -t 1 backend.api.app:redis_broker backend.indexing
+      - REDIS_URL=redis://redis
+    command: pdm run dramatiq -p 1 -t 1 backend.tasks:redis_broker backend.tasks.default -Q default
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+  ml_worker_cpu:
+    build: "./backend"
+    environment:
+      - REDIS_URL=redis://redis
+    volumes:
+      - ./backend/backend:/app/backend
+      - ./backend/scripts:/app/scripts
+      - ./backend/tests:/app/tests
+      - ./.test_data:/.test_data
+      - kerasmodels:/root/.keras
+    command: pdm run dramatiq -p 1 -t 1 backend.tasks:redis_broker backend.tasks.default -Q ml
     restart: always
     deploy:
       resources:

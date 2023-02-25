@@ -5,13 +5,11 @@ from itertools import chain
 from typing import Collection, Iterable, Iterator
 
 import av
-import dramatiq
 import PIL.Image
 from more_itertools import ichunked
 from pydantic import BaseModel
 from toolz import concat, count
 
-import backend.settings
 from backend.classifiers import AbstractClassifier
 from backend.classifiers.prediction import (
     GroupedPerFramePrediction,
@@ -178,6 +176,7 @@ def process_file(file: pathlib.Path):
     backend.models.Videos.insert_one(video.dict())
     print(f"Inserting {video.dict()}")
     import tensorflow as tf
+
     tf.keras.backend.clear_session()
 
 
@@ -204,7 +203,6 @@ def delete_index():
     db_videos.delete_many({})
 
 
-@dramatiq.actor
 def reindex_all(directories: list[str], extensions: list[str]):
     delete_index()
     files = find_video_files(directories, extensions)
@@ -213,9 +211,3 @@ def reindex_all(directories: list[str], extensions: list[str]):
     # with multiprocessing.Pool(1) as p:
     # p.map(process_file, files)
     list(map(process_file, files))
-
-
-if __name__ == "__main__":
-    reindex_all(backend.settings.settings)
-    print("Done?")
-    pass
