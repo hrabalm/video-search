@@ -69,7 +69,7 @@ class ReindexAllEndpoint(Resource):
         directories = list(backend.settings.settings.scanned_directories)
         extensions = list(backend.settings.settings.video_extensions)
 
-        backend.tasks.default.reindex_all.send(
+        backend.tasks.default.rpc_reindex_all.send(
             directories,
             extensions,
         )

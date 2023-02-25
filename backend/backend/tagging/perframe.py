@@ -10,7 +10,6 @@ from pydantic import BaseModel
 from toolz import concat, count
 
 import backend.tagging
-from backend.classifiers import AbstractClassifier
 from backend.classifiers.prediction import (
     GroupedPerFramePrediction,
     PerFramePrediction,
@@ -93,19 +92,25 @@ def resize_frame(frame, resolution) -> DecodedFrame:
 
 def classify_batch(images, classifier_name: str):
     from backend.classifiers.catalog import classifier_makers
+
     classifier = get_model(classifier_name, classifier_makers[classifier_name])
     predictions = classifier.classify_batch(images)
     return predictions
 
-import backend.tasks.ml
 
 def classify_chunks(chunks, classifier_name: str):
+    import backend.tasks.ml
+
     def classify_chunk(chunk: Iterable[DecodedFrame]):
         chunk = list(chunk)
         images = map(lambda f: f.image, chunk)
         pts = map(lambda f: f.pts, chunk)
         # predictions = classify_batch(list(images), classifier_name)
-        predictions = backend.tasks.ml.remote_classify_batch.send(list(images), classifier_name).get_result(block=True, timeout=10*60*1_000)  # FIXME: 60s
+        predictions = backend.tasks.ml.remote_classify_batch.send(
+            list(images), classifier_name
+        ).get_result(
+            block=True, timeout=10 * 60 * 1_000
+        )  # FIXME: 60s
         predictions_with_pts = [
             [
                 PerFramePrediction(score=pred.score, label=pred.label, pts=pred_pts)

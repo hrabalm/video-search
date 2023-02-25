@@ -1,9 +1,7 @@
-from backend.tasks import redis_broker, redis_result, dramatiq
+from backend.tasks import dramatiq
 
 
-@dramatiq.actor(
-    queue_name="ml", store_results=True, broker=redis_broker, result_ttl=30 * 1_0000
-)
+@dramatiq.actor(queue_name="ml", store_results=True, result_ttl=30 * 1_000)
 def remote_classify_batch(images, classifier_name: str):
     from backend.tagging.perframe import classify_batch as f
 
