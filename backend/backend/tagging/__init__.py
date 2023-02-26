@@ -69,11 +69,15 @@ class VideoMetadataTagger(IVideoTagger):
             width = ctx.width
             height = ctx.height
             codec_name = ctx.name
+        extension = (
+            video_path.suffix[1:] if video_path.suffix[0] == "." else video_path.suffix
+        )
 
         tags = [
             VideoTag(model="metadata", tag=f"width:{width}", conf=1.0),
             VideoTag(model="metadata", tag=f"height:{height}", conf=1.0),
             VideoTag(model="metadata", tag=f"video_codec:{codec_name}", conf=1.0),
+            VideoTag(model="metadata", tag=f"extension:{extension}", conf=1.0),
         ]
 
         return tags
