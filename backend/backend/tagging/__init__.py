@@ -59,3 +59,21 @@ class VideoHasher(IVideoProcessor):
 
 class VideoMetadataTagger(IVideoTagger):
     """Extracts metadata from the video file and adds tags"""
+
+    def tag(self, video_path: pathlib.Path) -> list[VideoTag]:
+        import av
+
+        with av.open(str(video_path)) as container:
+            stream = container.streams.video[0]
+            ctx = stream.codec_context
+            width = ctx.width
+            height = ctx.height
+            codec_name = ctx.name
+
+        tags = [
+            VideoTag(model="metadata", tag=f"width:{width}", conf=1.0),
+            VideoTag(model="metadata", tag=f"height:{height}", conf=1.0),
+            VideoTag(model="metadata", tag=f"video_codec:{codec_name}", conf=1.0),
+        ]
+
+        return tags

@@ -17,6 +17,7 @@ def process_file(file: pathlib.Path):
                 lambda: backend.tagging.perframe.VideoPerFrameTagger(
                     "tf-efficientnet",
                 ),
+                lambda: backend.tagging.VideoMetadataTagger(),
             ]
         )
     ]
