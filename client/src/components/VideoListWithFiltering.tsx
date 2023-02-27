@@ -45,7 +45,7 @@ function ResultsTable({ tags }: { tags: string[] }) {
   useEffect(() => {
     const videos = fetchVideosFiltered(tags);
     videos.then(setData);
-  }, []);
+  }, [tags]);
 
   const handleClickFilter = () => {
     setDialogOpen(true);
