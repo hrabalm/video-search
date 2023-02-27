@@ -1,5 +1,5 @@
+import concurrent.futures
 import logging
-import multiprocessing
 import pathlib
 from itertools import chain
 
@@ -59,8 +59,10 @@ def index_files(files: list[pathlib.Path]):
         if settings.concurrent_videos == 1:
             return list(map(process_file, files))
         else:
-            with multiprocessing.Pool(settings.concurrent_videos) as p:
-                return p.map(process_file, files)
+            with concurrent.futures.ProcessPoolExecutor(
+                settings.concurrent_videos
+            ) as p:
+                return list(p.map(process_file, files))
 
     took, _ = process_all_files()
 
@@ -79,13 +81,16 @@ def index_new_files(directories: list[str], extensions: list[str]):
         return backend.models.Videos.get_by_filename(str(file.absolute())) is None
 
     files = list(find_video_files(directories, extensions))
-    print(f"Found {len(files)} multimedia files.")
+    print(f"Found {len(files)} multimedia files.", flush=True)
     new_files = list(filter(is_new_file, files))
-    print(f"Found {len(new_files)} new multimedia files.")
+    print(f"Found {len(new_files)} new multimedia files.", flush=True)
 
-    took = index_files(new_files)
-    files_count = len(new_files)
-    print(f"Indexing {files_count} files took {(took)/(10**9)}s.")
+    if len(new_files) > 0:
+        took = index_files(new_files)
+        files_count = len(new_files)
+        print(f"Indexing {files_count} files took {(took)/(10**9)}s.", flush=True)
+    else:
+        print("No new files were indexed.", flush=True)
 
 
 def reindex_all(directories: list[str], extensions: list[str]):
