@@ -3,6 +3,7 @@ import React from "react";
 import { useLoaderData } from "react-router-dom";
 import { getVideo } from "../lib/utils";
 import {
+  Box,
   Chip,
   Grid,
   Paper,
@@ -10,14 +11,18 @@ import {
   TextField,
   Typography,
   Button,
+  Tab,
+  Tabs,
 } from "@mui/material";
 import _ from "lodash";
 import DownloadButton from "../components/DownloadButton";
+import { VideoTag } from "../lib/types";
+import { Dictionary } from "lodash";
 
 const TAG_MIN_CONF = 0.75;
 const CHIP_MARGIN = 0.3;
 
-export async function loader({ params }: { params: any }) {
+export async function loader({ params }: { params: { videoId: string } }) {
   const videoId = params.videoId;
   return await getVideo(videoId);
 }
@@ -30,7 +35,38 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-function TagsTable({ tags_by_tagger }: any) {
+function TabPanel({
+  children,
+  index,
+  value,
+  ...other
+}: {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}) {
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+function TagsTable({
+  tags_by_tagger,
+}: {
+  tags_by_tagger: Dictionary<VideoTag[]>;
+}) {
   return (
     <Grid container spacing={2}>
       {Object.entries(tags_by_tagger).map(([model, tags], i) => {
@@ -44,8 +80,8 @@ function TagsTable({ tags_by_tagger }: any) {
             <Grid item xs={8}>
               <Item>
                 {tags
-                  .filter((tag) => tag.conf >= TAG_MIN_CONF)
-                  .map((tag) => {
+                  .filter((tag: VideoTag) => tag.conf >= TAG_MIN_CONF)
+                  .map((tag: VideoTag) => {
                     return (
                       <Chip
                         key={tag.tag}
@@ -65,11 +101,19 @@ function TagsTable({ tags_by_tagger }: any) {
 
 export default function VideoDetail() {
   const video: any = useLoaderData();
-  const tags_by_tagger = _.groupBy(video.video.tags, (tag) => tag.model);
+  const tags_by_tagger: Dictionary<VideoTag[]> = _.groupBy(
+    video.video.tags,
+    (tag) => tag.model
+  );
 
   // FIXME: this should be absolute URL to be useful
   const base = "http://localhost:8080"; // TODO: remove
   const url = base + `/api/v2/source-file/${video.video._id["$oid"]}`;
+
+  const [tabValue, setTabValue] = React.useState(0);
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
+  };
 
   return (
     <>
@@ -112,8 +156,21 @@ export default function VideoDetail() {
           <DownloadButton text="Download" link={url} />
         </Grid>
       </Grid>
-      <Typography>Tags:</Typography>
-      <TagsTable tags_by_tagger={tags_by_tagger} />
+      <Tabs value={tabValue} onChange={handleChange} centered>
+        <Tab label="Tags" />
+        <Tab label="Raw" />
+      </Tabs>
+      <TabPanel value={tabValue} index={0}>
+        <Typography>Tags:</Typography>
+        <TagsTable tags_by_tagger={tags_by_tagger} />
+      </TabPanel>
+      <TabPanel value={tabValue} index={1}>
+        <Paper>
+          <Typography>
+            <pre>{JSON.stringify(video, null, 4)}</pre>
+          </Typography>
+        </Paper>
+      </TabPanel>
     </>
   );
 }
