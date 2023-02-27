@@ -1,10 +1,13 @@
 import logging
+import multiprocessing
 import pathlib
 from itertools import chain
 
 import backend.models
 import backend.tagging
+import backend.utils as utils
 from backend.classifiers.prediction import Video
+from backend.settings import settings
 
 
 def process_file(file: pathlib.Path):
@@ -50,21 +53,19 @@ def delete_index():
 
 def reindex_all(directories: list[str], extensions: list[str]):
     delete_index()
-    files = find_video_files(directories, extensions)
+    files = list(find_video_files(directories, extensions))
 
-    # TODO: Process multiple files at once
-    # with multiprocessing.Pool(1) as p:
-    # p.map(process_file, files)
-    import time
+    @utils.time_exec
+    def process_all_files():
+        if settings.concurrent_videos == 1:
+            return list(map(process_file, files))
+        else:
+            with multiprocessing.Pool(settings.concurrent_videos) as p:
+                return p.map(process_file, files)
 
-    start = time.time_ns()
-    list(map(process_file, files))
-    end = time.time_ns()
-    took = end - start
-    print(f"Indexing took {(took)/(10**9)}s.")
-
-
-# indexing
+    files_count = len(files)
+    took, _ = process_all_files()
+    print(f"Indexing {files_count} files took {(took)/(10**9)}s.")
 
 
 class VideoIndexer:

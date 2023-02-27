@@ -16,6 +16,8 @@ class Settings(BaseSettings):
     scanned_directories = {str((get_project_root() / ".test_data").resolve())}
     video_extensions = {".mp4", ".mkv", ".flv", ".avi"}
 
+    concurrent_videos = 4
+
     class Config:
         pass
 
