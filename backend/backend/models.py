@@ -38,6 +38,10 @@ class Videos:
         return db_videos.find_one({"_id": ObjectId(id)})
 
     @staticmethod
+    def get_by_filename(filename: str):
+        return db_videos.find_one({"filenames": filename})
+
+    @staticmethod
     def get_all():
         return list(
             db_videos.find().sort("filenames", pymongo.ASCENDING)

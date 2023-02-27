@@ -68,6 +68,20 @@ class VideosByTagEndpoint(Resource):
             return {}
 
 
+@api.route("/api/v2/index-new-files")
+class IndexNewFilesEndpoint(Resource):
+    def post(self):
+        # set is not JSON serializable, so we have to convert to list
+        directories = list(backend.settings.settings.scanned_directories)
+        extensions = list(backend.settings.settings.video_extensions)
+
+        backend.tasks.default.rpc_index_new_files.send(
+            directories,
+            extensions,
+        )
+        return {"message": "success"}
+
+
 @api.route("/api/v2/reindex-all")
 class ReindexAllEndpoint(Resource):
     def post(self):

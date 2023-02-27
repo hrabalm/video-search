@@ -15,6 +15,11 @@ export async function getVideo(videoId: string) {
   return response.data;
 }
 
+export async function indexNewFiles() {
+  const response = await axios.post(`/api/v2/index-new-files`);
+  return response.data;
+}
+
 export async function reindexAll() {
   const response = await axios.post(`/api/v2/reindex-all`);
   return response.data;

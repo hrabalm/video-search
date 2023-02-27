@@ -51,9 +51,8 @@ def delete_index():
     db_videos.delete_many({})
 
 
-def reindex_all(directories: list[str], extensions: list[str]):
-    delete_index()
-    files = list(find_video_files(directories, extensions))
+def index_files(files: list[pathlib.Path]):
+    """Index files. Expects that there are no existing records for them."""
 
     @utils.time_exec
     def process_all_files():
@@ -63,8 +62,43 @@ def reindex_all(directories: list[str], extensions: list[str]):
             with multiprocessing.Pool(settings.concurrent_videos) as p:
                 return p.map(process_file, files)
 
-    files_count = len(files)
     took, _ = process_all_files()
+
+    return took
+
+
+def index_new_files(directories: list[str], extensions: list[str]):
+    """Indexes new files.
+
+    Not meant to be called directly (but through a task!)
+    """
+
+    # currently, this appears rather slow as we check whether each file is in
+    # database one by one
+    def is_new_file(file: pathlib.Path):
+        return backend.models.Videos.get_by_filename(str(file.absolute())) is None
+
+    files = list(find_video_files(directories, extensions))
+    print(f"Found {len(files)} multimedia files.")
+    new_files = list(filter(is_new_file, files))
+    print(f"Found {len(new_files)} new multimedia files.")
+
+    took = index_files(new_files)
+    files_count = len(new_files)
+    print(f"Indexing {files_count} files took {(took)/(10**9)}s.")
+
+
+def reindex_all(directories: list[str], extensions: list[str]):
+    """Deletes the index and then reindexes all files.
+
+    Not meant to be called directly (but through a task!)
+    """
+    delete_index()
+    files = list(find_video_files(directories, extensions))
+
+    took = index_files(files)
+
+    files_count = len(files)
     print(f"Indexing {files_count} files took {(took)/(10**9)}s.")
 
 
