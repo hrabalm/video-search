@@ -45,12 +45,6 @@ def find_video_files(directories: list[str], extensions: list[str]):
     return video_files
 
 
-def delete_index():
-    from backend.api.db import db_videos
-
-    db_videos.delete_many({})
-
-
 def index_files(files: list[pathlib.Path]):
     """Index files. Expects that there are no existing records for them."""
 
@@ -98,7 +92,7 @@ def reindex_all(directories: list[str], extensions: list[str]):
 
     Not meant to be called directly (but through a task!)
     """
-    delete_index()
+    backend.models.Videos.delete_all()
     files = list(find_video_files(directories, extensions))
 
     took = index_files(files)

@@ -68,3 +68,7 @@ class Videos:
                 ).sort("filenames", pymongo.ASCENDING)
             )  # FIXME: check
         return Videos.get_all()
+
+    @staticmethod
+    def delete_all():
+        db_videos.delete_many({})
