@@ -37,10 +37,13 @@ export default function Root() {
           <Divider />
           <List>
             <DrawerListLink text="Search by tag" absolute="/search-by-tag/" />
+            {/*
+            // FIXME: Searching by image is not yet implemented
             <DrawerListLink
               text="Search by image"
               absolute="/search-by-image/"
             />
+            */}
             <Divider />
             <DrawerListLink text="Status" absolute="/status/" />
             <DrawerListLink text="Settings" absolute="/settings/" />
