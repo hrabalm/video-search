@@ -1,5 +1,5 @@
 export interface ObjectId {
-  _id: string;
+  $oid: string;
 }
 
 export interface VideoTag {

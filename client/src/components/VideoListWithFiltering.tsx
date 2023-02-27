@@ -15,6 +15,7 @@ import { Link as RouterLink } from "react-router-dom";
 import { Dialog } from "@mui/material";
 
 import { fetchAvailableTags, fetchVideosFiltered } from "../lib/utils";
+import { VideoRecord } from "../lib/types";
 
 function ListAvailableTags() {
   const [data, setData] = useState({ tags: [] });
@@ -35,8 +36,10 @@ function ListAvailableTags() {
   );
 }
 
-function ResultsTable({ tags }: any) {
-  const [data, setData] = useState({ videos: [] });
+function ResultsTable({ tags }: { tags: string[] }) {
+  const [data, setData]: [{ videos: VideoRecord[] }, any] = useState({
+    videos: [],
+  });
   const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
