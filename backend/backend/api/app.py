@@ -19,6 +19,12 @@ def jsonify(x):
     return json.loads(json_util.dumps(x))
 
 
+@api.route("/api/heartbeat")
+class Heartbeat(Resource):
+    def get(self):
+        return {"status": "healthy"}
+
+
 @api.route("/api/v2/tags")
 class TagsEndpoint(Resource):
     def get(self):

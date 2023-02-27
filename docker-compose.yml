@@ -43,6 +43,11 @@ services:
       - SQL_PASSWORD
       - SQL_DB
       - REDIS_URL=redis://redis
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/heartbeat"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
   api_worker:
     build: "./backend"
     volumes:
@@ -51,9 +56,6 @@ services:
       - ./backend/tests:/app/tests
       - ./.test_data:/.test_data
       - kerasmodels:/root/.keras
-    # depends_on:
-      # api:
-        # condition: service_healthy
     environment:
       - SQL_HOST
       - SQL_PORT
