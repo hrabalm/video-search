@@ -5,16 +5,15 @@ import dramatiq.results.backends
 import periodiq
 
 import backend.dramatiq_extensions
-import backend.tasks.settings as settings
+from backend.settings import settings
 
-tasks_settings = settings.Settings()
-redis_url = tasks_settings.redis_url
+redis_url = settings.redis_url
 
 message_encoder = backend.dramatiq_extensions.ZstdPickleEncoder(
-    tasks_settings.compression_level
+    settings.message_compression_level
 )
 result_encoder = backend.dramatiq_extensions.ZstdPickleEncoder(
-    tasks_settings.compression_level
+    settings.message_compression_level
 )
 
 redis_broker = dramatiq.brokers.redis.RedisBroker(url=redis_url)

@@ -17,6 +17,8 @@ class Settings(BaseSettings):
     video_extensions = {".mp4", ".mkv", ".flv", ".avi"}
 
     concurrent_videos = 4
+    redis_url = "redis://localhost"
+    message_compression_level = 3
 
     class Config:
         pass
