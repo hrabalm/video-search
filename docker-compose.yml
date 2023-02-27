@@ -37,11 +37,6 @@ services:
     environment:
       - FLASK_RUN_HOST=0.0.0.0
       - FLASK_DEBUG=1
-      - SQL_HOST
-      - SQL_PORT
-      - SQL_USER
-      - SQL_PASSWORD
-      - SQL_DB
       - REDIS_URL=redis://redis
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/api/heartbeat"]
@@ -57,11 +52,6 @@ services:
       - ./.test_data:/.test_data
       - kerasmodels:/root/.keras
     environment:
-      - SQL_HOST
-      - SQL_PORT
-      - SQL_USER
-      - SQL_PASSWORD
-      - SQL_DB
       - REDIS_URL=redis://redis
     command: pdm run dramatiq -p 1 -t 1 backend.tasks:redis_broker backend.tasks.default backend.tasks.periodic -Q default --watch .
     restart: always
