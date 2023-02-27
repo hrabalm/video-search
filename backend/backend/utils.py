@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Any, Callable
 
 
-def time_exec(f) -> Callable[..., tuple[Any, float]]:
+def time_exec(f) -> Callable[..., tuple[float, Any]]:
     functools.wraps(f)
 
     def wrapper():
