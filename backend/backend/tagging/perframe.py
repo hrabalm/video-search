@@ -22,6 +22,7 @@ from backend.classifiers.prediction import (
 # appears to leak memory.
 ENABLE_MODEL_CACHE = True
 TIMEOUT_MS = 10 * 60 * 1_000
+KEYFRAMES_ONLY = True
 
 models_cache = {}
 
@@ -47,7 +48,9 @@ class VideoPerFrameTagger(backend.tagging.IVideoTagger):
 
     def tag(self, video_path: pathlib.Path) -> list[VideoTag]:
         assert video_path.is_file()
-        tags = tag_video(str(video_path), self.model_name)
+        tags = tag_video(
+            str(video_path), self.model_name, keyframes_only=KEYFRAMES_ONLY
+        )
         return list(tags)
 
 
