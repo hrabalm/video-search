@@ -20,7 +20,9 @@ redis_broker = dramatiq.brokers.redis.RedisBroker(url=redis_url)
 redis_result = dramatiq.results.backends.RedisBackend(
     url=redis_url, encoder=result_encoder
 )
-redis_broker.add_middleware(dramatiq.results.Results(backend=redis_result))
+redis_broker.add_middleware(
+    dramatiq.results.Results(backend=redis_result, result_ttl=60 * 60 * 1_000)
+)
 redis_broker.add_middleware(periodiq.PeriodiqMiddleware())
 dramatiq.set_broker(redis_broker)
 dramatiq.set_encoder(message_encoder)

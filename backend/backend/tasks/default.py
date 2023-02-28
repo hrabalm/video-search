@@ -3,7 +3,7 @@ import logging
 from backend.tasks import dramatiq
 
 
-@dramatiq.actor
+@dramatiq.actor(time_limit=24 * 60 * 60 * 1_000)
 def rpc_index_new_files(directories: list[str], extensions: list[str]):
     import backend.indexing
 
@@ -15,7 +15,7 @@ def rpc_index_new_files(directories: list[str], extensions: list[str]):
         logging.info("Cannot start logging, it is already on progress.")
 
 
-@dramatiq.actor
+@dramatiq.actor(time_limit=24 * 60 * 60 * 1_000)
 def rpc_reindex_all(directories: list[str], extensions: list[str]):
     import backend.indexing
 
