@@ -62,18 +62,43 @@ export default function VideoListWithFiltering() {
     setDialogOpen(false);
   };
 
+  const activeFiltersText = (count: number) => {
+    if (count === 0) {
+      return "No Active Filters.";
+    } else if (count === 1) {
+      return "1 Active Filter.";
+    } else {
+      return `${count} Active Filters.`;
+    }
+  };
+
   return (
     <>
       <TableContainer component={Paper} sx={{ p: 1 }}>
-        <Button variant="outlined" onClick={handleClickFilter} sx={{ m: 0.5 }}>
-          Edit Filters
-        </Button>
-        <Button variant="outlined" onClick={handleClearFilters} sx={{ m: 0.5 }}>
-          Clear Filters
-        </Button>
-        <Button variant="outlined" onClick={handleRefresh} sx={{ m: 0.5 }}>
-          Refresh
-        </Button>
+        <Grid container sx={{ alignItems: "center" }}>
+          <Grid item xs={3} sx={{ textAlign: "center" }}>
+            <Typography>{activeFiltersText(selectedTags.length)}</Typography>
+          </Grid>
+          <Grid item xs={9} sx={{ textAlign: "right" }}>
+            <Button
+              variant="outlined"
+              onClick={handleClickFilter}
+              sx={{ m: 0.5 }}
+            >
+              Edit Filters
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={handleClearFilters}
+              sx={{ m: 0.5 }}
+            >
+              Clear Filters
+            </Button>
+            <Button variant="outlined" onClick={handleRefresh} sx={{ m: 0.5 }}>
+              Refresh
+            </Button>
+          </Grid>
+        </Grid>
         <Table>
           <TableHead>
             <TableRow>
