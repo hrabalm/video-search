@@ -1,7 +1,9 @@
+import logging
+
 import pymongo
 from bson.objectid import ObjectId
 
-from backend.api.db import db_videos
+from backend.api.db import db_status, db_videos
 from backend.settings import settings
 
 
@@ -216,3 +218,21 @@ class Videos:
     @staticmethod
     def delete_all():
         db_videos.delete_many({})
+
+
+class Status:
+    @staticmethod
+    def set(key, old_value: dict | None, new_value: dict) -> bool:
+        db_status.create_index("key", unique=True)
+        if not old_value:
+            old_value = {"key": key}
+        try:
+            db_status.find_one_and_replace(old_value, new_value, upsert=True)
+            return True
+        except Exception as e:
+            logging.warning(e)
+        return False
+
+    @staticmethod
+    def get(key: str) -> dict | None:
+        return db_status.find_one({"key": key})

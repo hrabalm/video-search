@@ -1,13 +1,49 @@
 import concurrent.futures
 import logging
 import pathlib
+import typing
 from itertools import chain
+
+import pydantic
 
 import backend.models
 import backend.tagging
 import backend.utils as utils
 from backend.classifiers.prediction import Video
 from backend.settings import settings
+
+
+class IndexingStatus(pydantic.BaseModel):
+    key = "indexing"
+    state: typing.Literal["indexing"] | typing.Literal["done"]
+
+
+class IndexingController:
+    @staticmethod
+    def try_start_indexing() -> bool:
+        old_state_raw = backend.models.Status.get("indexing")
+        old_state = (
+            IndexingStatus(state=old_state_raw["state"])
+            if old_state_raw
+            else IndexingStatus(state="done")
+        )
+
+        if old_state.state == "indexing":
+            logging.warning("Cannot start indexing as it is already in progress.")
+            return False
+
+        new_state = IndexingStatus(state="indexing")
+        if backend.models.Status.set("indexing", old_state_raw, new_state.dict()):
+            return True
+        logging.warning("Cannot start indexing as it is already in progress.")
+        return False
+
+    @staticmethod
+    def finish_indexing():
+        new_state = IndexingStatus(state="done")
+        backend.models.Status.set(
+            "indexing", {"key": "indexing", "state": "indexing"}, new_state.dict()
+        )
 
 
 def process_file(file: pathlib.Path):

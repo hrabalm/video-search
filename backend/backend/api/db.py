@@ -12,4 +12,5 @@ _mongo_client = pymongo.MongoClient(
 )
 db = _mongo_client[settings.mongo_db]
 db_videos = db.get_collection("videos", codec_options=codec_options)
+db_status = db.get_collection("status")
 fs = gridfs.GridFS(db)
