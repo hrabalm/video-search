@@ -16,13 +16,20 @@ import {
   Autocomplete,
   TextField,
   Grid,
+  Stack,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Link as RouterLink } from "react-router-dom";
 
 import { fetchAvailableTags, fetchVideosFiltered } from "../lib/utils";
 import { VideoRecord } from "../lib/types";
-import { VideoSettings } from "@mui/icons-material";
+import { styled } from "@mui/material/styles";
+
+const Item = styled(Paper)(({ theme }) => ({
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: "center",
+}));
 
 export default function VideoListWithFiltering() {
   const [data, setData]: [{ videos: VideoRecord[] }, any] = useState({
@@ -136,80 +143,100 @@ export default function VideoListWithFiltering() {
         fullWidth
       >
         <Box sx={{ m: 1, minHeight: 400 }}>
-          <Grid
-            container
-            sx={{ textAlign: "center", alignItems: "center", display: "flex" }}
-          >
-            <Grid item xs={10}>
-              <Autocomplete
-                value={dialogActiveTag}
-                disablePortal
-                options={availableTags}
-                renderInput={(params) => <TextField {...params} label="Tag" />}
-                onChange={(_, value) => {
-                  if (value != null) {
-                    setDialogActiveTag(value);
-                  }
+          <Stack spacing={2}>
+            <Item>
+              <Grid
+                container
+                sx={{
+                  textAlign: "center",
+                  alignItems: "center",
+                  display: "flex",
                 }}
-              />
-            </Grid>
-            <Grid item xs={2}>
-              <Box>
-                <Button
-                  key={selectedTags.join("+")}
-                  size="large"
-                  variant="contained"
-                  disabled={!availableTags.includes(dialogActiveTag)}
-                  onClick={() => {
-                    if (
-                      availableTags.length > 0 &&
-                      availableTags.includes(dialogActiveTag)
-                    ) {
-                      setSelectedTags(
-                        Array.from(
-                          new Set([dialogActiveTag, ...selectedTags])
-                        ).sort()
-                      );
-                      setDialogActiveTag("");
-                    }
-                  }}
-                >
-                  Add
-                </Button>
-              </Box>
-            </Grid>
-          </Grid>
-          <Typography>Active Filters:</Typography>
-          <TableContainer component={Paper}>
-            <Table sx={{ p: 1 }}>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Tag</TableCell>
-                  <TableCell></TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {selectedTags.map((tag) => (
-                  <TableRow key={tag}>
-                    <TableCell>{tag}</TableCell>
-                    <TableCell>
-                      <Button
-                        variant="outlined"
-                        startIcon={<DeleteIcon />}
-                        onClick={() => {
+              >
+                <Grid item xs={10}>
+                  <Autocomplete
+                    value={dialogActiveTag}
+                    disablePortal
+                    options={availableTags}
+                    renderInput={(params) => (
+                      <TextField {...params} label="Add Filter" />
+                    )}
+                    onChange={(_, value) => {
+                      if (value != null) {
+                        setDialogActiveTag(value);
+                      }
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={2}>
+                  <Box>
+                    <Button
+                      key={selectedTags.join("+")}
+                      size="large"
+                      variant="contained"
+                      disabled={!availableTags.includes(dialogActiveTag)}
+                      onClick={() => {
+                        if (
+                          availableTags.length > 0 &&
+                          availableTags.includes(dialogActiveTag)
+                        ) {
                           setSelectedTags(
-                            selectedTags.filter((element) => element !== tag)
+                            Array.from(
+                              new Set([dialogActiveTag, ...selectedTags])
+                            ).sort()
                           );
-                        }}
-                      >
-                        Delete
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                          setDialogActiveTag("");
+                        }
+                      }}
+                    >
+                      Add
+                    </Button>
+                  </Box>
+                </Grid>
+              </Grid>
+            </Item>
+            <Item>
+              <TableContainer component={Paper}>
+                <Table sx={{ p: 1 }}>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Tag</TableCell>
+                      <TableCell></TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {selectedTags.map((tag) => (
+                      <TableRow key={tag}>
+                        <TableCell>{tag}</TableCell>
+                        <TableCell>
+                          <Button
+                            variant="outlined"
+                            startIcon={<DeleteIcon />}
+                            onClick={() => {
+                              setSelectedTags(
+                                selectedTags.filter(
+                                  (element) => element !== tag
+                                )
+                              );
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    {selectedTags.length === 0 && (
+                      <TableRow>
+                        <TableCell colSpan={2} sx={{ textAlign: "center" }}>
+                          No Active Filters
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Item>
+          </Stack>
         </Box>
       </Dialog>
     </>
