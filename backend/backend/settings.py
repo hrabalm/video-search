@@ -20,6 +20,8 @@ class Settings(BaseSettings):
     redis_url = "redis://localhost"
     message_compression_level = 3
 
+    minimum_confidence_shown = 0.75
+
     class Config:
         pass
 

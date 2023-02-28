@@ -2,6 +2,7 @@ import pymongo
 from bson.objectid import ObjectId
 
 from backend.api.db import db_videos
+from backend.settings import settings
 
 
 class TagImages:
@@ -15,8 +16,46 @@ class Files:
 class Tags:
     @staticmethod
     def get_all():
-        tags = list(db_videos.distinct("tags.tag"))
-        return tags
+        return sorted(list(set(t["tag"] for t in TagsV2.get_all())))
+
+
+class TagsV2:
+    @staticmethod
+    def get_all():
+        tags = db_videos.aggregate(
+            [
+                {"$unwind": "$tags"},
+                {"$match": {"tags.conf": {"$gte": settings.minimum_confidence_shown}}},
+                {
+                    "$project": {
+                        "_id": 0,
+                        "tag": "$tags.tag",
+                        "conf": "$tags.conf",
+                        "model": "$tags.model",
+                    }
+                },
+                {
+                    "$group": {
+                        "_id": {
+                            "tag": "$tag",
+                            "model": "$model",
+                        },
+                        "conf": {"$max": "$conf"},
+                        "count": {"$count": {}},
+                    }
+                },
+                {
+                    "$project": {
+                        "_id": 0,
+                        "tag": "$_id.tag",
+                        "model": "$_id.model",
+                        "conf": "$conf",
+                        "count": "$count",
+                    }
+                },
+            ]
+        )
+        return list(tags)
 
 
 class Videos:

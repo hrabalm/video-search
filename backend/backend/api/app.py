@@ -6,10 +6,10 @@ from bson import json_util
 from flask import Flask, send_file
 from flask_restx import Api, Resource, fields
 
-import backend.settings
 import backend.tasks
 import backend.tasks.default
 from backend.models import Tags, Videos
+from backend.settings import settings
 
 app = Flask(__name__)
 api = Api(app)
@@ -54,13 +54,19 @@ videos_by_tags_post_req = api.model(
 @api.route("/api/v2/videos-by-tags")
 class VideosByTagEndpoint(Resource):
     def get(self, tags):
-        return {"videos": jsonify(Videos.get_by_tags(tags, 0.5))}
+        return {
+            "videos": jsonify(
+                Videos.get_by_tags(tags, settings.minimum_confidence_shown)
+            )
+        }
 
     @api.expect(videos_by_tags_post_req)
     def post(self):
         if api.payload and "tags" in api.payload:
             tags = api.payload["tags"]
-            videos_found = jsonify(Videos.get_by_tags(tags, 0.0))
+            videos_found = jsonify(
+                Videos.get_by_tags(tags, settings.minimum_confidence_shown)
+            )
             return {
                 "videos": videos_found,
             }
@@ -72,8 +78,8 @@ class VideosByTagEndpoint(Resource):
 class IndexNewFilesEndpoint(Resource):
     def post(self):
         # set is not JSON serializable, so we have to convert to list
-        directories = list(backend.settings.settings.scanned_directories)
-        extensions = list(backend.settings.settings.video_extensions)
+        directories = list(settings.scanned_directories)
+        extensions = list(settings.video_extensions)
 
         backend.tasks.default.rpc_index_new_files.send(
             directories,
@@ -86,8 +92,8 @@ class IndexNewFilesEndpoint(Resource):
 class ReindexAllEndpoint(Resource):
     def post(self):
         # set is not JSON serializable, so we have to convert to list
-        directories = list(backend.settings.settings.scanned_directories)
-        extensions = list(backend.settings.settings.video_extensions)
+        directories = list(settings.scanned_directories)
+        extensions = list(settings.video_extensions)
 
         backend.tasks.default.rpc_reindex_all.send(
             directories,
