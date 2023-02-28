@@ -82,9 +82,7 @@ class Videos:
 
     @staticmethod
     def get_all():
-        return list(
-            db_videos.find().sort("filenames", pymongo.ASCENDING)
-        )  # FIXME: check
+        return list(db_videos.find().sort("filenames.0", pymongo.ASCENDING))
 
     @staticmethod
     def get_by_tags(tags: list[str], min_conf: float):
@@ -104,8 +102,8 @@ class Videos:
                             for tag in tags
                         ]
                     }
-                ).sort("filenames", pymongo.ASCENDING)
-            )  # FIXME: check
+                ).sort("filenames.0", pymongo.ASCENDING)
+            )
         return Videos.get_all()
 
     @staticmethod
