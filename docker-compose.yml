@@ -55,7 +55,7 @@ services:
       - kerasmodels:/root/.keras
     environment:
       - REDIS_URL=redis://redis
-    command: pdm run dramatiq -p 1 -t 1 backend.tasks:redis_broker backend.tasks.default backend.tasks.periodic -Q default --watch .
+    command: pdm run dramatiq -p 6 -t 1 backend.tasks:redis_broker backend.tasks.default backend.tasks.periodic -Q default --watch .
     restart: always
     deploy:
       resources:
