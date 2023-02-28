@@ -1,0 +1,27 @@
+version: '3'
+services:
+  ml_worker_gpu:
+    build:
+      context: "./backend"
+      dockerfile: "Dockerfile.GPU"
+    environment:
+      - REDIS_URL=redis://redis
+    volumes:
+      - ./backend/backend:/app/backend
+      - ./backend/scripts:/app/scripts
+      - ./backend/tests:/app/tests
+      - ./.test_data:/data/test_data
+      - kerasmodels:/root/.keras
+    command: pdm run dramatiq -p 1 -t 1 backend.tasks:redis_broker backend.tasks.ml -Q ml --watch .
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+        reservations:
+            devices:
+              - driver: nvidia
+                count: 1
+                capabilities: [gpu]
+volumes:
+  kerasmodels:
