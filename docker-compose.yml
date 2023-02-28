@@ -27,7 +27,8 @@ services:
       - ./backend/backend:/app/backend
       - ./backend/scripts:/app/scripts
       - ./backend/tests:/app/tests
-      - ./.test_data:/.test_data
+      - ~/Videos/testdata:/data/testdata2
+      - ./.test_data:/data/test_data
       - kerasmodels:/root/.keras
     depends_on:
       mongo:
@@ -49,7 +50,8 @@ services:
       - ./backend/backend:/app/backend
       - ./backend/scripts:/app/scripts
       - ./backend/tests:/app/tests
-      - ./.test_data:/.test_data
+      - ./.test_data:/data/test_data
+      - ~/Videos/testdata:/data/testdata2
       - kerasmodels:/root/.keras
     environment:
       - REDIS_URL=redis://redis
@@ -81,7 +83,7 @@ services:
       - ./backend/backend:/app/backend
       - ./backend/scripts:/app/scripts
       - ./backend/tests:/app/tests
-      - ./.test_data:/.test_data
+      - ./.test_data:/data/test_data
       - kerasmodels:/root/.keras
     command: pdm run dramatiq -p 1 -t 1 backend.tasks:redis_broker backend.tasks.ml -Q ml --watch .
     restart: always
