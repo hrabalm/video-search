@@ -13,5 +13,6 @@ export interface VideoRecord {
   _id: ObjectId;
   filenames: Array<string>;
   filehash: string;
+  thumbnails: Array<string>;
   tags: Array<VideoTag>;
 }

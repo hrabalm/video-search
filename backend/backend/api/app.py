@@ -3,7 +3,7 @@ import pathlib
 
 import werkzeug.exceptions
 from bson import json_util
-from flask import Flask, send_file
+from flask import Flask, Response, send_file
 from flask_restx import Api, Resource, fields
 
 import backend.tasks
@@ -168,3 +168,14 @@ class DebugDeleteStatusEndpoint(Resource):
         from backend.api.db import db_status
 
         db_status.delete_many({})
+
+
+@api.route("/api/v2/thumbnails/<id>")
+class ThumbnailsEndpoint(Resource):
+    def get(self, id):
+        from bson import ObjectId
+
+        from backend.api.db import fs
+
+        out = fs.get(ObjectId(id))
+        return Response(out.read(), mimetype="image/webp")

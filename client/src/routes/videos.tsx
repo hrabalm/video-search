@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import _ from "lodash";
 import DownloadButton from "../components/DownloadButton";
-import { VideoTag } from "../lib/types";
+import { VideoTag, VideoRecord } from "../lib/types";
 import { Dictionary } from "lodash";
 
 const TAG_MIN_CONF = 0.75;
@@ -99,6 +99,23 @@ function TagsTable({
   );
 }
 
+function Thumbnails({ video }: { video: VideoRecord }) {
+  return (
+    <Paper>
+      {video.thumbnails.map((objectId, idx) => {
+        return (
+          <img
+            key={idx}
+            src={`http://localhost:8080/api/v2/thumbnails/${objectId}`}
+            alt="thumbnail"
+            style={{ objectFit: "contain", width: "100%", padding: "20px" }}
+          />
+        );
+      })}
+    </Paper>
+  );
+}
+
 export default function VideoDetail() {
   const video: any = useLoaderData();
   const tags_by_tagger: Dictionary<VideoTag[]> = _.groupBy(
@@ -158,6 +175,7 @@ export default function VideoDetail() {
       </Grid>
       <Tabs value={tabValue} onChange={handleChange} centered>
         <Tab label="Tags" />
+        <Tab label="Thumbnails" />
         <Tab label="Raw" />
       </Tabs>
       <TabPanel value={tabValue} index={0}>
@@ -165,7 +183,10 @@ export default function VideoDetail() {
         <TagsTable tags_by_tagger={tags_by_tagger} />
       </TabPanel>
       <TabPanel value={tabValue} index={1}>
-        <Paper>
+        <Thumbnails video={video.video} />
+      </TabPanel>
+      <TabPanel value={tabValue} index={2}>
+        <Paper sx={{ p: 2 }}>
           <Typography>
             <pre>{JSON.stringify(video, null, 4)}</pre>
           </Typography>
