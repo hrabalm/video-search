@@ -166,6 +166,8 @@ export default function VideoListWithFiltering() {
                         <Link
                           component={RouterLink}
                           to={`/videos/${row["_id"]["$oid"]}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
                         >
                           {row.filenames[0]}
                         </Link>
