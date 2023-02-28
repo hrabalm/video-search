@@ -22,6 +22,7 @@ import { Link as RouterLink } from "react-router-dom";
 
 import { fetchAvailableTags, fetchVideosFiltered } from "../lib/utils";
 import { VideoRecord } from "../lib/types";
+import { VideoSettings } from "@mui/icons-material";
 
 export default function VideoListWithFiltering() {
   const [data, setData]: [{ videos: VideoRecord[] }, any] = useState({
@@ -121,6 +122,11 @@ export default function VideoListWithFiltering() {
               ))}
           </TableBody>
         </Table>
+        <Grid container sx={{ alignItems: "center", mt: 1 }}>
+          <Grid item xs={3} sx={{ textAlign: "center" }}>
+            <Typography>Showing {data.videos.length} results.</Typography>
+          </Grid>
+        </Grid>
       </TableContainer>
 
       <Dialog
