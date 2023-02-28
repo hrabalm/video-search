@@ -37,3 +37,8 @@ export async function reindexAll() {
   const response = await axios.post(`/api/v2/reindex-all`);
   return response.data;
 }
+
+export async function debugDeleteStatus() {
+  const response = await axios.post("/api/v2/debug-delete-status");
+  return response.data;
+}

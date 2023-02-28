@@ -160,3 +160,11 @@ class SourceFileEndpoint(Resource):
             download_name=file_name,
             mimetype=file_mimetype,
         )
+
+
+@api.route("/api/v2/debug-delete-status")
+class DebugDeleteStatusEndpoint(Resource):
+    def post(self):
+        from backend.api.db import db_status
+
+        db_status.delete_many({})
