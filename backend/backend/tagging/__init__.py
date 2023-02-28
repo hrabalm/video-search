@@ -9,7 +9,7 @@ class IVideoProcessor(metaclass=abc.ABCMeta):
     """IVideoProcessors"""
 
     @abc.abstractmethod
-    def process(self, video, video_path: pathlib.Path) -> Video:
+    def process(self, video: Video, video_path: pathlib.Path) -> Video:
         raise NotImplementedError
 
 
@@ -38,7 +38,7 @@ class VideoTaggerRunner(IVideoProcessor):
             ]
             self._is_initialized = True
 
-    def process(self, video, video_path: pathlib.Path) -> Video:
+    def process(self, video: Video, video_path: pathlib.Path) -> Video:
         self._initialize()
         for tagger in self._taggers_instances:
             video.tags += tagger.tag(video_path)
@@ -48,13 +48,26 @@ class VideoTaggerRunner(IVideoProcessor):
 class VideoThumbnailer(IVideoProcessor):
     """Creates and uploads thumbnails for a video"""
 
-    pass  # TODO
+    def process(self, video: Video, video_path: pathlib.Path) -> Video:
+        from backend.tasks.default import rpc_create_video_thumbnails
+
+        # keys = rpc_create_video_thumbnails.send(video_path).get_result(
+        # block=True, timeout=60 * 60 * 1_000
+        # )
+        keys = rpc_create_video_thumbnails(video_path)
+        video.thumbnails = keys
+        return video
 
 
 class VideoHasher(IVideoProcessor):
     """Add file hash to a video"""
 
-    pass  # TODO
+    def process(self, video: Video, video_path: pathlib.Path) -> Video:
+        from backend.filehash import file_hash
+
+        filehash = file_hash(str(video_path))
+        video.filehash = filehash
+        return video
 
 
 class VideoMetadataTagger(IVideoTagger):

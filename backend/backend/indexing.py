@@ -58,7 +58,9 @@ def process_file(file: pathlib.Path):
                 ),
                 lambda: backend.tagging.VideoMetadataTagger(),
             ]
-        )
+        ),
+        backend.tagging.VideoThumbnailer(),
+        backend.tagging.VideoHasher(),
     ]
     indexer = VideoIndexer(processors)
     indexer.index_video(file)

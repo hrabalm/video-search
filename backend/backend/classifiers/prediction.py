@@ -90,6 +90,7 @@ class VideoTag(BaseModel):
 class Video(BaseModel):
     filenames: list[str]
     filehash: str
+    thumbnails: list[str] = []
     tags: list[VideoTag]
 
 
