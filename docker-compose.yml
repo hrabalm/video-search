@@ -29,7 +29,6 @@ services:
       - ./backend/tests:/app/tests
       - ~/Videos/testdata:/data/testdata2
       - ./.test_data:/data/test_data
-      - kerasmodels:/root/.keras
     depends_on:
       mongo:
         condition: service_healthy
@@ -52,15 +51,10 @@ services:
       - ./backend/tests:/app/tests
       - ./.test_data:/data/test_data
       - ~/Videos/testdata:/data/testdata2
-      - kerasmodels:/root/.keras
     environment:
       - REDIS_URL=redis://redis
     command: pdm run dramatiq -p 2 -t 1 backend.tasks:redis_broker backend.tasks.default backend.tasks.periodic -Q default --watch .
     restart: always
-    deploy:
-      resources:
-        limits:
-          memory: 4G
   periodiq:  # periodic tasks scheduler
     build: "./backend"
     volumes:
