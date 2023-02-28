@@ -190,10 +190,18 @@ export default function VideoListWithFiltering() {
               </TableHead>
               <TableBody>
                 {selectedTags.map((tag) => (
-                  <TableRow>
+                  <TableRow key={tag}>
                     <TableCell>{tag}</TableCell>
                     <TableCell>
-                      <Button variant="outlined" startIcon={<DeleteIcon />}>
+                      <Button
+                        variant="outlined"
+                        startIcon={<DeleteIcon />}
+                        onClick={() => {
+                          setSelectedTags(
+                            selectedTags.filter((element) => element !== tag)
+                          );
+                        }}
+                      >
                         Delete
                       </Button>
                     </TableCell>
