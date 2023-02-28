@@ -2,6 +2,7 @@ import Box from "@mui/material/Box";
 
 import { useState, useEffect } from "react";
 import {
+  Dialog,
   Paper,
   Table,
   TableHead,
@@ -10,53 +11,51 @@ import {
   TableBody,
   Link,
   Button,
+  Typography,
+  TableContainer,
+  Autocomplete,
+  TextField,
+  Grid,
 } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { Link as RouterLink } from "react-router-dom";
-import { Dialog } from "@mui/material";
 
 import { fetchAvailableTags, fetchVideosFiltered } from "../lib/utils";
 import { VideoRecord } from "../lib/types";
-
-function ListAvailableTags() {
-  const [data, setData] = useState({ tags: [] });
-
-  useEffect(() => {
-    fetchAvailableTags().then(setData);
-  }, []);
-
-  return (
-    <Box>
-      <div>Available tags:</div>
-      <ul>
-        {data.tags.map((item) => (
-          <li key={item}>{item}</li>
-        ))}
-      </ul>
-    </Box>
-  );
-}
 
 function ResultsTable({ tags }: { tags: string[] }) {
   const [data, setData]: [{ videos: VideoRecord[] }, any] = useState({
     videos: [],
   });
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedTags, setSelectedTags]: [string[], any] = useState([]);
+  const [availableTags, setAvailableTags]: [string[], any] = useState([]);
+  const [dialogActiveTag, setDialogActiveTag]: [string, any] = useState("");
 
   useEffect(() => {
-    const videos = fetchVideosFiltered(tags);
+    const tags = fetchAvailableTags();
+    tags.then((x) => {
+      console.log(x);
+      setAvailableTags(x.tags);
+    });
+  }, [setAvailableTags]);
+
+  useEffect(() => {
+    const videos = fetchVideosFiltered(selectedTags);
     videos.then(setData);
-  }, [tags]);
+  }, [selectedTags]);
 
   const handleClickFilter = () => {
     setDialogOpen(true);
   };
 
-  const handleDeleteFilter = () => {
-    // TODO: implement
+  const handleClearFilters = () => {
+    setSelectedTags([]);
   };
 
   const handleRefresh = () => {
-    // TODO: implement
+    const videos = fetchVideosFiltered(selectedTags);
+    videos.then(setData);
   };
 
   const handleFiltersDialogClose = () => {
@@ -69,8 +68,8 @@ function ResultsTable({ tags }: { tags: string[] }) {
         <Button variant="outlined" onClick={handleClickFilter} sx={{ m: 0.5 }}>
           Edit Filters
         </Button>
-        <Button variant="outlined" onClick={handleDeleteFilter} sx={{ m: 0.5 }}>
-          Delete Filters
+        <Button variant="outlined" onClick={handleClearFilters} sx={{ m: 0.5 }}>
+          Clear Filters
         </Button>
         <Button variant="outlined" onClick={handleRefresh} sx={{ m: 0.5 }}>
           Refresh
@@ -99,8 +98,80 @@ function ResultsTable({ tags }: { tags: string[] }) {
         </Table>
       </Paper>
 
-      <Dialog open={dialogOpen} onClose={handleFiltersDialogClose}>
-        <ListAvailableTags />
+      <Dialog
+        open={dialogOpen}
+        onClose={handleFiltersDialogClose}
+        maxWidth="md"
+        fullWidth
+      >
+        <Box sx={{ m: 1, minHeight: 400 }}>
+          <Grid
+            container
+            sx={{ textAlign: "center", alignItems: "center", display: "flex" }}
+          >
+            <Grid item xs={10}>
+              <Autocomplete
+                value={dialogActiveTag}
+                disablePortal
+                options={availableTags}
+                renderInput={(params) => <TextField {...params} label="Tag" />}
+                onChange={(_, value) => {
+                  if (value != null) {
+                    setDialogActiveTag(value);
+                  }
+                }}
+              />
+            </Grid>
+            <Grid item xs={2}>
+              <Box>
+                <Button
+                  key={selectedTags.join("+")}
+                  size="large"
+                  variant="contained"
+                  disabled={!availableTags.includes(dialogActiveTag)}
+                  onClick={() => {
+                    if (
+                      availableTags.length > 0 &&
+                      availableTags.includes(dialogActiveTag)
+                    ) {
+                      setSelectedTags(
+                        Array.from(
+                          new Set([dialogActiveTag, ...selectedTags])
+                        ).sort()
+                      );
+                      setDialogActiveTag("");
+                    }
+                  }}
+                >
+                  Add
+                </Button>
+              </Box>
+            </Grid>
+          </Grid>
+          <Typography>Active Filters:</Typography>
+          <TableContainer component={Paper}>
+            <Table sx={{ p: 1 }}>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Tag</TableCell>
+                  <TableCell></TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {selectedTags.map((tag) => (
+                  <TableRow>
+                    <TableCell>{tag}</TableCell>
+                    <TableCell>
+                      <Button variant="outlined" startIcon={<DeleteIcon />}>
+                        Delete
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
       </Dialog>
     </>
   );
