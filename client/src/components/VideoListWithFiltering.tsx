@@ -51,7 +51,6 @@ export default function VideoListWithFiltering() {
   useEffect(() => {
     const tags = fetchAvailableTags();
     tags.then((x) => {
-      console.log(x);
       setAvailableTags(x.tags);
     });
   }, [setAvailableTags]);
@@ -187,7 +186,6 @@ export default function VideoListWithFiltering() {
             }}
             onRowsPerPageChange={(event) => {
               setItemsPerPage(event.target.value);
-              console.log(event);
             }}
           />
         </Item>
