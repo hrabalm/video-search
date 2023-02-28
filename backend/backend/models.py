@@ -85,6 +85,29 @@ class Videos:
         return list(db_videos.find().sort("filenames.0", pymongo.ASCENDING))
 
     @staticmethod
+    def get_all_with_pagination_range(count_per_page: int, last_filename: str):
+        return list(
+            db_videos.find(
+                {
+                    "filenames.0": {
+                        "$gt": last_filename,
+                    }
+                }
+            )
+            .sort("filenames.0", pymongo.ASCENDING)
+            .limit(count_per_page)
+        )
+
+    @staticmethod
+    def get_all_with_pagination(items_per_page: int, page_number: int):
+        return list(
+            db_videos.find({})
+            .sort("filenames.0", pymongo.ASCENDING)
+            .skip((page_number - 1) * items_per_page)
+            .limit(items_per_page)
+        )
+
+    @staticmethod
     def get_by_tags(tags: list[str], min_conf: float):
         if len(tags) > 0:
             return list(
@@ -105,6 +128,90 @@ class Videos:
                 ).sort("filenames.0", pymongo.ASCENDING)
             )
         return Videos.get_all()
+
+    @staticmethod
+    def get_by_tags_with_pagination(
+        tags: list[str], min_conf: float, items_per_page: int, page_number: int
+    ):
+        if len(tags) > 0:
+            return list(
+                db_videos.find(
+                    {
+                        "$and": [
+                            {
+                                "tags": {
+                                    "$elemMatch": {
+                                        "conf": {"$gt": min_conf},
+                                        "tag": tag,
+                                    }
+                                }
+                            }
+                            for tag in tags
+                        ]
+                    }
+                )
+                .sort("filenames.0", pymongo.ASCENDING)
+                .skip((page_number - 1) * items_per_page)
+                .limit(items_per_page)
+            )
+        return Videos.get_all_with_pagination(items_per_page, page_number)
+
+    @staticmethod
+    def get_by_tags_with_pagination_range(
+        tags: list[str], min_conf: float, count_per_page: int, last_filename: str = ""
+    ):
+        if len(tags) > 0:
+            return list(
+                db_videos.find(
+                    {
+                        "$and": (
+                            [
+                                {
+                                    "filenames.0": {
+                                        "$gt": last_filename,
+                                    }
+                                },
+                            ]
+                            + [
+                                {
+                                    "tags": {
+                                        "$elemMatch": {
+                                            "conf": {"$gt": min_conf},
+                                            "tag": tag,
+                                        }
+                                    }
+                                }
+                                for tag in tags
+                            ]
+                        )
+                    }
+                )
+                .sort("filenames.0", pymongo.ASCENDING)
+                .limit(count_per_page)
+            )
+        return Videos.get_all_with_pagination_range(count_per_page, last_filename)
+
+    @staticmethod
+    def count(
+        tags: list[str] = [], min_conf: float = settings.minimum_confidence_shown
+    ):
+        if len(tags) > 0:
+            return db_videos.count_documents(
+                {
+                    "$and": [
+                        {
+                            "tags": {
+                                "$elemMatch": {
+                                    "conf": {"$gt": min_conf},
+                                    "tag": tag,
+                                }
+                            }
+                        }
+                        for tag in tags
+                    ]
+                }
+            )
+        return db_videos.count_documents({})
 
     @staticmethod
     def delete_all():

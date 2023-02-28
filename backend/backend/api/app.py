@@ -47,16 +47,23 @@ videos_by_tags_post_req = api.model(
     "QueryVideosByTagRequest",
     {
         "tags": fields.List(fields.String),
+        "count_per_page": fields.Integer(default=100),
+        "last_filename": fields.String(default=""),
     },
 )
 
 
 @api.route("/api/v2/videos-by-tags")
 class VideosByTagEndpoint(Resource):
-    def get(self, tags):
+    def get(self, tags, items_per_page, page_number):
         return {
             "videos": jsonify(
-                Videos.get_by_tags(tags, settings.minimum_confidence_shown)
+                Videos.get_by_tags_with_pagination(
+                    tags,
+                    settings.minimum_confidence_shown,
+                    items_per_page,
+                    page_number,
+                )
             )
         }
 
@@ -64,12 +71,33 @@ class VideosByTagEndpoint(Resource):
     def post(self):
         if api.payload and "tags" in api.payload:
             tags = api.payload["tags"]
+            items_per_page = api.payload["items_per_page"]
+            page_number = api.payload["page_number"]
+            print(tags, items_per_page, page_number, flush=True)
             videos_found = jsonify(
-                Videos.get_by_tags(tags, settings.minimum_confidence_shown)
+                Videos.get_by_tags_with_pagination(
+                    tags,
+                    settings.minimum_confidence_shown,
+                    items_per_page,
+                    page_number,
+                )
             )
             return {
                 "videos": videos_found,
             }
+        else:
+            return {}
+
+
+@api.route("/api/v2/videos-count")
+class VideosCountEndpoint(Resource):
+    def get(self, tags=[]):
+        return {"count": Videos.count(tags)}
+
+    def post(self):
+        if api.payload and "tags" in api.payload:
+            tags = api.payload["tags"]
+            return {"count": Videos.count(tags)}
         else:
             return {}
 

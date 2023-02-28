@@ -18,11 +18,16 @@ import {
   Grid,
   Stack,
   Toolbar,
+  TablePagination,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Link as RouterLink } from "react-router-dom";
 
-import { fetchAvailableTags, fetchVideosFiltered } from "../lib/utils";
+import {
+  fetchAvailableTags,
+  fetchVideosFiltered,
+  getVideoCount,
+} from "../lib/utils";
 import { VideoRecord } from "../lib/types";
 import { styled } from "@mui/material/styles";
 
@@ -39,6 +44,9 @@ export default function VideoListWithFiltering() {
   const [selectedTags, setSelectedTags]: [string[], any] = useState([]);
   const [availableTags, setAvailableTags]: [string[], any] = useState([]);
   const [dialogActiveTag, setDialogActiveTag]: [string, any] = useState("");
+  const [resultsCountTotal, setResultsCountTotal]: [number, any] = useState(0);
+  const [itemsPerPage, setItemsPerPage]: [number, any] = useState(10);
+  const [currentPageNumber, setCurrentPageNumber]: [number, any] = useState(0);
 
   useEffect(() => {
     const tags = fetchAvailableTags();
@@ -49,9 +57,20 @@ export default function VideoListWithFiltering() {
   }, [setAvailableTags]);
 
   useEffect(() => {
-    const videos = fetchVideosFiltered(selectedTags);
+    const videos = fetchVideosFiltered(
+      selectedTags,
+      itemsPerPage,
+      currentPageNumber + 1
+    );
     videos.then(setData);
-  }, [selectedTags]);
+  }, [selectedTags, itemsPerPage, currentPageNumber]);
+
+  useEffect(() => {
+    const countResponse = getVideoCount(selectedTags);
+    countResponse.then((x) => {
+      setResultsCountTotal(x.count);
+    });
+  }, [resultsCountTotal, selectedTags]);
 
   const handleClickFilter = () => {
     setDialogOpen(true);
@@ -62,7 +81,11 @@ export default function VideoListWithFiltering() {
   };
 
   const handleRefresh = () => {
-    const videos = fetchVideosFiltered(selectedTags);
+    const videos = fetchVideosFiltered(
+      selectedTags,
+      itemsPerPage,
+      currentPageNumber + 1
+    );
     videos.then(setData);
   };
 
@@ -152,12 +175,21 @@ export default function VideoListWithFiltering() {
                   ))}
               </TableBody>
             </Table>
-            <Grid container sx={{ alignItems: "center", mt: 1 }}>
-              <Grid item xs={3} sx={{ textAlign: "center" }}>
-                <Typography>Showing {data.videos.length} results.</Typography>
-              </Grid>
-            </Grid>
           </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25, 100]}
+            component="div"
+            count={resultsCountTotal}
+            rowsPerPage={itemsPerPage}
+            page={currentPageNumber}
+            onPageChange={(_, value) => {
+              setCurrentPageNumber(value);
+            }}
+            onRowsPerPageChange={(event) => {
+              setItemsPerPage(event.target.value);
+              console.log(event);
+            }}
+          />
         </Item>
 
         <Dialog

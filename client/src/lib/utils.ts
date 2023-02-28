@@ -5,8 +5,21 @@ export async function fetchAvailableTags() {
   return response.data;
 }
 
-export async function fetchVideosFiltered(tags: string[]) {
-  const response = await axios.post("/api/v2/videos-by-tags", { tags });
+export async function fetchVideosFiltered(
+  tags: string[],
+  itemsPerPage: number,
+  pageNumber: number
+) {
+  const response = await axios.post("/api/v2/videos-by-tags", {
+    tags,
+    items_per_page: itemsPerPage,
+    page_number: pageNumber,
+  });
+  return response.data;
+}
+
+export async function getVideoCount(tags: string[] = []) {
+  const response = await axios.post("/api/v2/videos-count", { tags });
   return response.data;
 }
 
