@@ -47,13 +47,14 @@ export default function VideoListWithFiltering() {
   const [resultsCountTotal, setResultsCountTotal]: [number, any] = useState(0);
   const [itemsPerPage, setItemsPerPage]: [number, any] = useState(10);
   const [currentPageNumber, setCurrentPageNumber]: [number, any] = useState(0);
+  const [refreshCounter, setRefreshCounter]: [number, any] = useState(0);
 
   useEffect(() => {
     const tags = fetchAvailableTags();
     tags.then((x) => {
       setAvailableTags(x.tags);
     });
-  }, [setAvailableTags]);
+  }, [setAvailableTags, refreshCounter]);
 
   useEffect(() => {
     const videos = fetchVideosFiltered(
@@ -62,14 +63,14 @@ export default function VideoListWithFiltering() {
       currentPageNumber + 1
     );
     videos.then(setData);
-  }, [selectedTags, itemsPerPage, currentPageNumber]);
+  }, [selectedTags, itemsPerPage, currentPageNumber, refreshCounter]);
 
   useEffect(() => {
     const countResponse = getVideoCount(selectedTags);
     countResponse.then((x) => {
       setResultsCountTotal(x.count);
     });
-  }, [resultsCountTotal, selectedTags]);
+  }, [resultsCountTotal, selectedTags, refreshCounter]);
 
   const handleClickFilter = () => {
     setDialogOpen(true);
@@ -80,12 +81,7 @@ export default function VideoListWithFiltering() {
   };
 
   const handleRefresh = () => {
-    const videos = fetchVideosFiltered(
-      selectedTags,
-      itemsPerPage,
-      currentPageNumber + 1
-    );
-    videos.then(setData);
+    setRefreshCounter(refreshCounter + 1);
   };
 
   const handleFiltersDialogClose = () => {
