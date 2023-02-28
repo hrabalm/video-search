@@ -23,7 +23,7 @@ import { Link as RouterLink } from "react-router-dom";
 import { fetchAvailableTags, fetchVideosFiltered } from "../lib/utils";
 import { VideoRecord } from "../lib/types";
 
-function ResultsTable({ tags }: { tags: string[] }) {
+export default function VideoListWithFiltering() {
   const [data, setData]: [{ videos: VideoRecord[] }, any] = useState({
     videos: [],
   });
@@ -173,16 +173,6 @@ function ResultsTable({ tags }: { tags: string[] }) {
           </TableContainer>
         </Box>
       </Dialog>
-    </>
-  );
-}
-
-export default function VideoListWithFiltering() {
-  return (
-    <>
-      <Box>
-        <ResultsTable tags={[]} />
-      </Box>
     </>
   );
 }
