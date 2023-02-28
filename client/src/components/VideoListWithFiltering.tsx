@@ -64,7 +64,7 @@ function ResultsTable({ tags }: { tags: string[] }) {
 
   return (
     <>
-      <Paper>
+      <TableContainer component={Paper} sx={{ p: 1 }}>
         <Button variant="outlined" onClick={handleClickFilter} sx={{ m: 0.5 }}>
           Edit Filters
         </Button>
@@ -96,7 +96,7 @@ function ResultsTable({ tags }: { tags: string[] }) {
               ))}
           </TableBody>
         </Table>
-      </Paper>
+      </TableContainer>
 
       <Dialog
         open={dialogOpen}
