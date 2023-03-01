@@ -6,6 +6,9 @@ from bson.objectid import ObjectId
 from backend.api.db import db_status, db_videos
 from backend.settings import settings
 
+db_videos.create_index("filenames.0", unique=True, background=True)
+db_videos.create_index("tags.tag", background=True)
+
 
 class TagImages:
     pass
