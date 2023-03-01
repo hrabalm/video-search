@@ -1,5 +1,6 @@
 import dramatiq
 import dramatiq.brokers.redis
+import dramatiq.rate_limits.backends
 import dramatiq.results
 import dramatiq.results.backends
 import periodiq
@@ -26,3 +27,5 @@ redis_broker.add_middleware(
 redis_broker.add_middleware(periodiq.PeriodiqMiddleware())
 dramatiq.set_broker(redis_broker)
 dramatiq.set_encoder(message_encoder)
+
+rate_limit_backend = dramatiq.rate_limits.backends.RedisBackend(url=redis_url)
