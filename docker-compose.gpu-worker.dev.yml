@@ -10,7 +10,6 @@ services:
       - ./backend/backend:/app/backend
       - ./backend/scripts:/app/scripts
       - ./backend/tests:/app/tests
-      - ./.test_data:/data/test_data
       - kerasmodels:/root/.keras
     command: pdm run dramatiq -p 1 -t 1 backend.tasks:redis_broker backend.tasks.ml -Q ml --watch .
     restart: always
