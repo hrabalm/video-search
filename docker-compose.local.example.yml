@@ -2,7 +2,7 @@ version: '3'
 services:
   api:
     volumes:
-      - ~/Videos:/data/Vidoes
+      - ~/Videos:/data/Videos
   api_worker:
     volumes:
-      - ~/Videos:/data/Vidoes
+      - ~/Videos:/data/Videos
