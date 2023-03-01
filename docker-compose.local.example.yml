@@ -1,0 +1,8 @@
+version: '3'
+services:
+  api:
+    volumes:
+      - ~/Videos:/data/Vidoes
+  api_worker:
+    volumes:
+      - ~/Videos:/data/Vidoes

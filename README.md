@@ -7,10 +7,11 @@ Video files can then be filtered by those tags.
 
 ## Setup
 
-Using `docker compose`:
+Create a copy of `docker-compose.local.example.yml` called i.e. `docker-compose.local.yml` and modify volume mount binds suitably so that they map your multimedia folders into containers' `/data/`. Then run all the services by combining `docker-compose.yml` files with `docker compose`:
 
 ```bash
-docker compose build && docker compose up
+docker compose -f docker-compose.yml -f docker-compose.dev.yml -f docker-compose.local.yml build
+docker compose -f docker-compose.yml -f docker-compose.dev.yml -f docker-compose.local.yml up
 ```
 
 Be aware, that the images that are downloaded and built are quite large, around

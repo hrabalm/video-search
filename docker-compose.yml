@@ -23,12 +23,6 @@ services:
     build: "./backend"
     ports:
       - "8080:5000"
-    volumes:
-      - ./backend/backend:/app/backend
-      - ./backend/scripts:/app/scripts
-      - ./backend/tests:/app/tests
-      - ~/Videos/testdata:/data/testdata2
-      - ./.test_data:/data/test_data
     depends_on:
       mongo:
         condition: service_healthy
@@ -36,7 +30,6 @@ services:
         condition: service_healthy
     environment:
       - FLASK_RUN_HOST=0.0.0.0
-      - FLASK_DEBUG=1
       - REDIS_URL=redis://redis
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/api/heartbeat"]
@@ -45,52 +38,27 @@ services:
       retries: 20
   api_worker:
     build: "./backend"
-    volumes:
-      - ./backend/backend:/app/backend
-      - ./backend/scripts:/app/scripts
-      - ./backend/tests:/app/tests
-      - ./.test_data:/data/test_data
-      - ~/Videos/testdata:/data/testdata2
     environment:
       - REDIS_URL=redis://redis
     command: pdm run dramatiq -p 2 -t 1 backend.tasks:redis_broker backend.tasks.default backend.tasks.periodic -Q default --watch .
     restart: always
   periodiq:  # periodic tasks scheduler
     build: "./backend"
-    volumes:
-      - ./backend/backend:/app/backend
-      - ./backend/scripts:/app/scripts
-      - ./backend/tests:/app/tests
     environment:
       - REDIS_URL=redis://redis
     command: pdm run periodiq backend.tasks:redis_broker backend.tasks.periodic
     restart: always
-    deploy:
-      resources:
-        limits:
-          memory: 512M
   ml_worker_cpu:
     build: "./backend"
     environment:
       - REDIS_URL=redis://redis
     volumes:
-      - ./backend/backend:/app/backend
-      - ./backend/scripts:/app/scripts
-      - ./backend/tests:/app/tests
-      - ./.test_data:/data/test_data
       - kerasmodels:/root/.keras
     command: pdm run dramatiq -p 1 -t 1 backend.tasks:redis_broker backend.tasks.ml -Q ml --watch .
     restart: always
-    deploy:
-      resources:
-        limits:
-          memory: 2G
   web:
     build: "./client"
     ports:
       - "80:3000"
-    volumes:
-      - "./client/src:/app/src"
-      - "./client/.env:/app/.env"
 volumes:
   kerasmodels:
