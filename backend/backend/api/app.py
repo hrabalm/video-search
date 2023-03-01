@@ -9,10 +9,13 @@ from flask_restx import Api, Resource, fields
 import backend.tasks
 import backend.tasks.default
 from backend.models import Tags, Videos
+from backend.scheduler import scheduler
 from backend.settings import settings
 
 app = Flask(__name__)
 api = Api(app)
+
+scheduler.start()
 
 
 def jsonify(x):
