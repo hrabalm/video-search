@@ -1,5 +1,9 @@
 import axios from "axios";
 
+export function buildApiUrl(stem: string) {
+  return `${process.env.REACT_APP_API_URI}${stem}`;
+}
+
 export async function fetchAvailableTags() {
   const response = await axios("/api/v2/tags");
   return response.data;

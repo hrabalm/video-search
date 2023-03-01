@@ -1,7 +1,7 @@
 import Title from "../components/Title";
 import React from "react";
 import { useLoaderData } from "react-router-dom";
-import { getVideo } from "../lib/utils";
+import { buildApiUrl, getVideo } from "../lib/utils";
 import {
   Box,
   Chip,
@@ -106,7 +106,7 @@ function Thumbnails({ video }: { video: VideoRecord }) {
         return (
           <img
             key={idx}
-            src={`http://localhost:8080/api/v2/thumbnails/${objectId}`}
+            src={buildApiUrl(`/api/v2/thumbnails/${objectId}`)}
             alt="thumbnail"
             style={{ objectFit: "contain", width: "100%", padding: "20px" }}
           />
@@ -123,10 +123,7 @@ export default function VideoDetail() {
     (tag) => tag.model
   );
 
-  // FIXME: this should be absolute URL to be useful
-  const base = "http://localhost:8080"; // TODO: remove
-  const url = base + `/api/v2/source-file/${video.video._id["$oid"]}`;
-
+  const url = buildApiUrl(`/api/v2/source-file/${video.video._id["$oid"]}`);
   const [tabValue, setTabValue] = React.useState(0);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);

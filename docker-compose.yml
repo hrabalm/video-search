@@ -91,5 +91,6 @@ services:
       - "80:3000"
     volumes:
       - "./client/src:/app/src"
+      - "./client/.env:/app/.env"
 volumes:
   kerasmodels:
