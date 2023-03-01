@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     mongo_password: Optional[str] = None
 
     scanned_directories = {"/data"}
-    video_extensions = {".mp4", ".mkv", ".flv", ".avi"}
+    video_extensions = {".mp4", ".mkv", ".flv", ".avi", ".webm", ".wmv"}
 
     concurrent_videos = 4
     redis_url = "redis://localhost"
