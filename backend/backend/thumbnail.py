@@ -10,7 +10,6 @@ def _sample_pts(filepath: pathlib.Path, count: int) -> list[int]:
     """Try to uniformly select `count` pts to cover the video."""
     max_pts_value = max_pts(filepath)
     sampled_pts = [i * max_pts_value // (count + 1) for i in range(1, count + 1)]
-    print(sampled_pts)
     return sampled_pts
 
 
