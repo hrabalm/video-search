@@ -3,19 +3,23 @@ import pathlib
 
 from PIL import Image
 
-from backend.tagging.perframe import count_keyframes, read_frames
+from backend.video_reader import get_frame_by_pts_approximate, max_pts
 
 
-def _select_keyframe_indices(count: int, target_count):
-    # FIXME: sometimes off by one?
-    indices = list(range(0, count, count // (target_count + 1)))[1:-1]
-    return indices
+def _sample_pts(filepath: pathlib.Path, count: int) -> list[int]:
+    """Try to uniformly select `count` pts to cover the video."""
+    max_pts_value = max_pts(filepath)
+    sampled_pts = [i * max_pts_value // (count + 1) for i in range(1, count + 1)]
+    print(sampled_pts)
+    return sampled_pts
 
 
-def _select_keyframes(keyframes, indices: set[int]):
-    for i, frame in enumerate(keyframes):
-        if i in indices:
-            yield frame
+def _select_frames(filepath: pathlib.Path, sample_pts: list[int]):
+    """Return frames which approximately match given pts."""
+    frames = [get_frame_by_pts_approximate(filepath, pts) for pts in sample_pts]
+    frames_pts = [frame.pts for frame in frames]
+    print(frames_pts)
+    return frames
 
 
 def _downsize_dimensions(width, height, max_width, max_height):
@@ -46,11 +50,7 @@ def create_thumbnails(
     assert filepath.exists()
     assert filepath.is_file()
 
-    count = count_keyframes(str(filepath))
-    frames = read_frames(str(filepath), keyframes_only=True)
-    indices = _select_keyframe_indices(count, thumbnails_count)
-
-    selected_frames = _select_keyframes(frames, set(indices))
+    selected_frames = _select_frames(filepath, _sample_pts(filepath, thumbnails_count))
     thumbnails = (
         _to_webp(_resize(frame.to_image(), max_width, max_height))
         for frame in selected_frames
