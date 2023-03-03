@@ -3,7 +3,7 @@ import pathlib
 
 from PIL import Image
 
-from backend.video_reader import get_frame_by_pts_approximate, max_pts
+from backend.video_reader import get_frames_by_pts_approximate, max_pts
 
 
 def _sample_pts(filepath: pathlib.Path, count: int) -> list[int]:
@@ -16,9 +16,8 @@ def _sample_pts(filepath: pathlib.Path, count: int) -> list[int]:
 
 def _select_frames(filepath: pathlib.Path, sample_pts: list[int]):
     """Return frames which approximately match given pts."""
-    frames = [get_frame_by_pts_approximate(filepath, pts) for pts in sample_pts]
-    frames_pts = [frame.pts for frame in frames]
-    print(frames_pts)
+    frames = list(get_frames_by_pts_approximate(filepath, sample_pts))
+
     return frames
 
 

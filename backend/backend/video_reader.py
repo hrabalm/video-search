@@ -68,3 +68,36 @@ def get_frame_by_pts_approximate(filepath: pathlib.Path, pts: int) -> av.VideoFr
                 if frame.pts >= pts:
                     return frame
         raise Exception(f"Unknown Error - Frame pts={pts} not found.")
+
+
+def get_frames_by_pts_approximate(
+    filepath: pathlib.Path, pts_list: list[int]
+) -> av.VideoFrame:
+    """Return frame with given pts or the previous one.
+
+    Args:
+        filename (pathlib.Path): video file
+        pts (int): Frame pts (time expressed in its stream's time base)
+
+    Raises:
+        KeyError: Raised when pts not found in a file.
+
+    Returns:
+        av.VideoFrame: Resulting VideoFrame
+    """
+    with av.open(str(filepath)) as container:
+        stream = container.streams.video[0]
+        for pts in pts_list:
+
+            def get_frame(pts):
+                container.seek(pts, backward=True, stream=stream)
+                for packet in container.demux(stream):
+                    for frame in packet.decode():
+                        # if I want to speed this u even so, I could just return the
+                        # keyframe I guess?
+                        # return frame
+                        if frame.pts >= pts:
+                            return frame
+                raise Exception(f"Unknown Error - Frame pts={pts} not found.")
+
+            yield get_frame(pts)
