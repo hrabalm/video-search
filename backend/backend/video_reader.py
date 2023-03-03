@@ -1,7 +1,6 @@
 import pathlib
 
 import av
-from toolz import concat, tail
 
 
 def max_pts(filepath: pathlib.Path) -> int:
@@ -15,11 +14,10 @@ def max_pts(filepath: pathlib.Path) -> int:
     """
     with av.open(str(filepath)) as container:
         stream = container.streams.video[0]
-        # look into last 3 packets
-        packets = tail(3, container.demux(stream))
-
-        frames = concat(p.decode() for p in packets)
-        return max(f.pts for f in frames)
+        pts = filter(
+            lambda x: x is not None, map(lambda x: x.pts, container.demux(stream))
+        )
+        return max(pts)
 
 
 def get_frame_by_pts(filepath: pathlib.Path, pts: int) -> av.VideoFrame:
@@ -64,6 +62,9 @@ def get_frame_by_pts_approximate(filepath: pathlib.Path, pts: int) -> av.VideoFr
         container.seek(pts, backward=True, stream=stream)
         for packet in container.demux(stream):
             for frame in packet.decode():
+                # if I want to speed this u even so, I could just return the
+                # keyframe I guess?
+                # return frame
                 if frame.pts >= pts:
                     return frame
         raise Exception(f"Unknown Error - Frame pts={pts} not found.")
