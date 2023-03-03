@@ -14,9 +14,9 @@ def _sample_pts(filepath: pathlib.Path, count: int) -> list[int]:
     return sampled_pts
 
 
-def _select_frames(filepath: pathlib.Path, sample_pts: list[int]):
+def _select_frames(filepath: pathlib.Path, sample_pts: list[int], keyframes_only=True):
     """Return frames which approximately match given pts."""
-    frames = list(get_frames_by_pts_approximate(filepath, sample_pts))
+    frames = list(get_frames_by_pts_approximate(filepath, sample_pts, keyframes_only))
 
     return frames
 
@@ -49,7 +49,9 @@ def create_thumbnails(
     assert filepath.exists()
     assert filepath.is_file()
 
-    selected_frames = _select_frames(filepath, _sample_pts(filepath, thumbnails_count))
+    selected_frames = _select_frames(
+        filepath, _sample_pts(filepath, thumbnails_count), keyframes_only=True
+    )
     thumbnails = (
         _to_webp(_resize(frame.to_image(), max_width, max_height))
         for frame in selected_frames
