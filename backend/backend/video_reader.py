@@ -20,12 +20,16 @@ def max_pts(filepath: pathlib.Path) -> int:
         return max(pts)
 
 
-def get_frame_by_pts(filepath: pathlib.Path, pts: int) -> av.VideoFrame:
+def get_frame_by_pts(
+    filepath: pathlib.Path, pts: int, keyframe_only=False
+) -> av.VideoFrame:
     """Return frame indexed by exact `pts` from a given file.
 
     Args:
         filename (pathlib.Path): video file
         pts (int): Frame pts (time expressed in its stream's time base)
+        keyframe_only (bool): If True, returns the previous keyframe rather
+        than the closest following frame.
 
     Raises:
         KeyError: Raised when pts not found in a file.
@@ -38,18 +42,24 @@ def get_frame_by_pts(filepath: pathlib.Path, pts: int) -> av.VideoFrame:
         container.seek(pts, backward=True, stream=stream)
         for packet in container.demux(stream):
             for frame in packet.decode():
-                if frame.pts == pts:
+                if keyframe_only:
+                    return frame
+                elif frame.pts >= pts:
                     return frame
                 elif frame.pts > pts:
                     raise KeyError("Frame pts not found.")
 
 
-def get_frame_by_pts_approximate(filepath: pathlib.Path, pts: int) -> av.VideoFrame:
+def get_frame_by_pts_approximate(
+    filepath: pathlib.Path, pts: int, keyframes_only=False
+) -> av.VideoFrame:
     """Return frame with given pts or the previous one.
 
     Args:
         filename (pathlib.Path): video file
         pts (int): Frame pts (time expressed in its stream's time base)
+        keyframes_only (bool): If True, returns the previous keyframe rather
+        than the closest following frame.
 
     Raises:
         KeyError: Raised when pts not found in a file.
@@ -62,16 +72,15 @@ def get_frame_by_pts_approximate(filepath: pathlib.Path, pts: int) -> av.VideoFr
         container.seek(pts, backward=True, stream=stream)
         for packet in container.demux(stream):
             for frame in packet.decode():
-                # if I want to speed this u even so, I could just return the
-                # keyframe I guess?
-                # return frame
-                if frame.pts >= pts:
+                if keyframes_only:
+                    return frame
+                elif frame.pts >= pts:
                     return frame
         raise Exception(f"Unknown Error - Frame pts={pts} not found.")
 
 
 def get_frames_by_pts_approximate(
-    filepath: pathlib.Path, pts_list: list[int]
+    filepath: pathlib.Path, pts_list: list[int], keyframes_only=False
 ) -> av.VideoFrame:
     """Return frame with given pts or the previous one.
 
@@ -93,10 +102,9 @@ def get_frames_by_pts_approximate(
                 container.seek(pts, backward=True, stream=stream)
                 for packet in container.demux(stream):
                     for frame in packet.decode():
-                        # if I want to speed this u even so, I could just return the
-                        # keyframe I guess?
-                        # return frame
-                        if frame.pts >= pts:
+                        if keyframes_only:
+                            return frame
+                        elif frame.pts >= pts:
                             return frame
                 raise Exception(f"Unknown Error - Frame pts={pts} not found.")
 
