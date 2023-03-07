@@ -143,6 +143,20 @@ export default function VideoDetail() {
         // })
       }
       <Grid container>
+        <Grid item xs={12} sx={{ m: 1 }}>
+          <TextField
+            id="url-textfield"
+            label="Video Filename"
+            defaultValue={video.video.filenames[0]}
+            variant="outlined"
+            size="small"
+            InputProps={{ readOnly: true }}
+            fullWidth
+            onFocus={(event) => {
+              event.target.select();
+            }}
+          />
+        </Grid>
         <Grid item xs sx={{ m: 1 }}>
           <TextField
             id="url-textfield"
