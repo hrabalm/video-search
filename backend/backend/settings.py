@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     scanned_directories = {"/data"}
     video_extensions = {".mp4", ".mkv", ".flv", ".avi", ".webm", ".wmv"}
 
-    concurrent_videos = 4
+    concurrent_videos = 2
     redis_url = "redis://localhost"
     message_compression_level = 3
 
