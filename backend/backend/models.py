@@ -67,7 +67,6 @@ class Videos:
     @staticmethod
     def insert_one(video):
         db_videos.insert_one(video)
-        print("Inserted")
 
     @staticmethod
     def get(id: str):
