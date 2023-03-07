@@ -9,10 +9,15 @@ import backend.utils as utils
 from backend.classifiers.prediction import Video
 from backend.settings import settings
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
 
 def process_file(file: pathlib.Path):
     import backend.tagging
     import backend.tagging.perframe
+
+    logging.info(f"processing {str(file)}")
 
     processors: list[backend.tagging.IVideoProcessor] = [
         backend.tagging.VideoTaggerRunner(
@@ -77,16 +82,16 @@ def index_new_files(directories: list[str], extensions: list[str]):
         return backend.models.Videos.get_by_filename(str(file.absolute())) is None
 
     files = list(find_video_files(directories, extensions))
-    print(f"Found {len(files)} multimedia files.", flush=True)
+    logging.info(f"Found {len(files)} multimedia files.")
     new_files = list(filter(is_new_file, files))
-    print(f"Found {len(new_files)} new multimedia files.", flush=True)
+    logging.info(f"Found {len(new_files)} new multimedia files.")
 
     if len(new_files) > 0:
         took = index_files(new_files)
         files_count = len(new_files)
-        print(f"Indexing {files_count} files took {(took)/(10**9)}s.", flush=True)
+        logging.info(f"Indexing {files_count} files took {(took)/(10**9)}s.")
     else:
-        print("No new files were indexed.", flush=True)
+        logging.info("No new files were indexed.")
 
 
 def reindex_all(directories: list[str], extensions: list[str]):
@@ -100,7 +105,7 @@ def reindex_all(directories: list[str], extensions: list[str]):
     took = index_files(files)
 
     files_count = len(files)
-    print(f"Indexing {files_count} files took {(took)/(10**9)}s.")
+    logging.info(f"Indexing {files_count} files took {(took)/(10**9)}s.")
 
 
 class VideoIndexer:
@@ -109,13 +114,12 @@ class VideoIndexer:
 
     def index_video(self, path: pathlib.Path):
         # TODO: only update old/missing if not exists
-        video = Video(filenames=[str(path)], filehash="NotImplemented", tags=[])
+        video = Video(filenames=[str(path)], filehash="", tags=[])
         for processor in self.processors:
             try:
                 # TODO: only necessary if missing/old (in which case I should)
                 # remove old data first
                 video = processor.process(video, path)
             except Exception as e:
-                # logging.error(str(e))  # FIXME: FORMAT
                 logging.exception(e)
         backend.models.Videos.insert_one(video.dict())
