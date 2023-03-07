@@ -10,14 +10,6 @@ db_videos.create_index("filenames.0", unique=True, background=True)
 db_videos.create_index("tags.tag", background=True)
 
 
-class TagImages:
-    pass
-
-
-class Files:
-    pass
-
-
 class Tags:
     @staticmethod
     def get_all():
