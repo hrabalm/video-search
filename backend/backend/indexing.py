@@ -122,4 +122,10 @@ class VideoIndexer:
                 video = processor.process(video, path)
             except Exception as e:
                 logging.exception(e)
-        backend.models.Videos.insert_one(video.dict())
+        from pymongo.errors import DuplicateKeyError
+
+        try:
+            backend.models.Videos.insert_one(video.dict())
+        except DuplicateKeyError as e:
+            logging.exception(e)
+            logging.warning(f"Could not insert {path} as it it already exists.")
