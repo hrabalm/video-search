@@ -72,6 +72,20 @@ export default function VideoListWithFiltering() {
     });
   }, [resultsCountTotal, selectedTags, refreshCounter]);
 
+  useEffect(() => {
+    // ensure the `currentPageNumber` is capped when number of results, items
+    // per page, etc. changes
+    if (currentPageNumber >= resultsCountTotal / itemsPerPage) {
+      setCurrentPageNumber(Math.floor(resultsCountTotal / itemsPerPage));
+    }
+  }, [
+    selectedTags,
+    refreshCounter,
+    itemsPerPage,
+    resultsCountTotal,
+    currentPageNumber,
+  ]);
+
   const handleClickFilter = () => {
     setDialogOpen(true);
   };
